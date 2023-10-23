@@ -6,7 +6,7 @@ export const PoolDB = () => {
       host: "127.0.0.1",
       user: "root",
       password: "",
-      database: "productos",
+      database: "comparaya",
     })
     .promise();
   return pool;

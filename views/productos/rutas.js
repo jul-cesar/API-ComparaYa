@@ -1,4 +1,5 @@
 import Express from "express";
+import Producto from "../../models/Producto.js";
 
 import {
   getProductos,
@@ -15,7 +16,7 @@ const rutasProductos = Express.Router();
 rutasProductos.route("/productos").get(async (req, res) => {
   try {
     const prods = await getProductos();
-    if (!prods || prods.length === 0) {
+    if (!prods) {
       return res
         .status(404)
         .send("No se encontraron productos o prende el xamp xd");
@@ -64,16 +65,26 @@ rutasProductos.route("/productos/:id").delete(async (req, res) => {
 
 rutasProductos.route("/productos/").post(async (req, res) => {
   try {
-    const { nombre, categoria, precio_d1, precio_olimpica, precio_exito, img } =
-      req.body;
-    const result = await addProducto(
+    const {
       nombre,
-      categoria,
+      imagen_url,
       precio_d1,
-      precio_olimpica,
+      precio_olim,
       precio_exito,
-      img
+      categoria_id,
+      nombre_categoria,
+    } = req.body;
+    const newProduct = new Producto(
+      null,
+      nombre,
+      imagen_url,
+      precio_d1,
+      precio_olim,
+      precio_exito,
+      categoria_id,
+      nombre_categoria
     );
+    const result = await addProducto(newProduct);
     if (!result) {
       return res.status(404).send("No se pudo agregar el producto");
     }

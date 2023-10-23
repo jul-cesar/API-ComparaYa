@@ -1,5 +1,9 @@
 import puppeteer from "puppeteer";
-import { addProducto, getProductos, updateProduct } from "../controllers/productos/controller.js";
+import {
+  addProducto,
+  getProductos,
+  updateProduct,
+} from "../controllers/productos/controller.js";
 
 export const ScrapMaker = async (
   categoria,
@@ -12,15 +16,22 @@ export const ScrapMaker = async (
 ) => {
   const addToDb = async (products) => {
     for (const prod of products) {
-      const { nombre, precio_d1, precio_olimpica, precio_exito, img } = prod;
+      const {
+        nombre,
+        imagen_url,
+        precio_d1,
+        precio_olim,
+        precio_exito,
+        categoria_id,
+      } = prod;
       try {
         const result = await addProducto(
           nombre,
-          categoria,
+          imagen_url,
           precio_d1,
-          precio_olimpica,
+          precio_olim,
           precio_exito,
-          img
+          categoria_id
         );
         console.log(result[0].insertId);
       } catch (error) {
@@ -34,7 +45,7 @@ export const ScrapMaker = async (
       const existingProd = prodsOnDb.find(
         (p) =>
           p.nombre.toLowerCase() === prod.nombre.toLowerCase() &&
-          p.categoria.toLowerCase() === prod.categoria.toLowerCase()
+          p.categoria_id === prod.categoria_id
       );
       if (existingProd) {
         let needsUpdate = false;
@@ -51,10 +62,10 @@ export const ScrapMaker = async (
           needsUpdate = true;
         }
         if (
-          prod.precio_olimpica !== 0 &&
-          prod.precio_olimpica !== existingProd.precio_olimpica
+          prod.precio_olim !== 0 &&
+          prod.precio_olim !== existingProd.precio_olim
         ) {
-          existingProd.precio_olimpica = prod.precio_olimpica;
+          existingProd.precio_olim = prod.precio_olim;
           needsUpdate = true;
         }
 
@@ -62,20 +73,20 @@ export const ScrapMaker = async (
           const {
             id,
             nombre,
-            categoria,
+            imagen_url,
             precio_d1,
-            precio_olimpica,
+            precio_olim,
             precio_exito,
-            img,
+            categoria_id,
           } = existingProd;
           await updateProduct(
             id,
             nombre,
-            categoria,
+            imagen_url,
             precio_d1,
-            precio_olimpica,
+            precio_olim,
             precio_exito,
-            img
+            categoria_id
           );
         }
       }
@@ -91,7 +102,7 @@ export const ScrapMaker = async (
   const scrap = async () => {
     try {
       console.log(`Scraping page: ${url}`);
-      const browser = await puppeteer.launch({ headless: false });
+      const browser = await puppeteer.launch();
 
       const page = await browser.newPage();
 
@@ -208,15 +219,15 @@ export const ScrapMaker = async (
 
             const baseProduct = {
               nombre: nombreEl ? nombreEl.innerText : "N/A",
-              categoria: categoria,
-              precio_d1: 0,
-              precio_olimpica: 0,
-              precio_exito: 0,
-              img: imgEl ? imgEl.src : "N/A",
+              imagen_url: imgEl ? imgEl.src : "N/A",
+              precio_d1: "0",
+              precio_olim: "0",
+              precio_exito: "0",
+              categoria_id: categoria,
             };
 
             if (distribuidora === "olimpica") {
-              baseProduct.precio_olimpica = precioEl
+              baseProduct.precio_olim = precioEl
                 ? precioEl.innerText.replace("$", "")
                 : "N/A";
             } else if (distribuidora === "d1") {
@@ -243,7 +254,7 @@ export const ScrapMaker = async (
       //         nombre: "Piña unidad",
       //         categoria: "fruta",
       //         precio_d1: "9000",
-      //         precio_olimpica: "8000",
+      //         precio_olim: "8000",
       //         precio_exito: " 8.090"
       //       }]
       const prodsOnDb = await getProductos();
@@ -281,7 +292,7 @@ export const ScrapMaker = async (
 
 for (let i = 1; i <= 6; i++) {
   await ScrapMaker(
-    "frutas",
+    4,
     "exito",
     `https://tienda.exito.com/mercado/frutas-y-verduras?page=${i}`,
     ".vtex-search-result-3-x-galleryItem",
@@ -293,6 +304,7 @@ for (let i = 1; i <= 6; i++) {
 
 // for (let i = 1; i <= 9; i++) {
 //   await ScrapMaker(
+//     5,
 //     "exito",
 //     `https://tienda.exito.com/mercado/pollo-carne-y-pescado?_ga=2.260112526.208548039.1697821974-1837544937.1697821974&_gac=1.262858366.1697838886.CjwKCAjwysipBhBXEiwApJOcu26rzZ_N5f_1p_1M5Yuvf_WaPu-IcGaCKIrkMg8oZiPnaiEQ57Kq7BoC9SIQAvD_BwE&page=${i}`,
 //     ".vtex-search-result-3-x-galleryItem",
@@ -304,6 +316,7 @@ for (let i = 1; i <= 6; i++) {
 
 // for (let i = 1; i <= 30; i++) {
 //   await ScrapMaker(
+//     6,
 //     "exito",
 //     `https://tienda.exito.com/mercado/lacteos-huevos-y-refrigerados?page=${i}`,
 //     ".vtex-search-result-3-x-galleryItem",
@@ -315,6 +328,7 @@ for (let i = 1; i <= 6; i++) {
 
 // for (let i = 1; i <= 42; i++) {
 //   await ScrapMaker(
+//     7,
 //     "exito",
 //     `https://tienda.exito.com/mercado/snacks?page=${i}`,
 //     ".vtex-search-result-3-x-galleryItem",
@@ -326,6 +340,7 @@ for (let i = 1; i <= 6; i++) {
 
 // for (let i = 1; i <= 18; i++) {
 //   await ScrapMaker(
+//     8,
 //     "exito",
 //     `https://tienda.exito.com/mercado/vinos-y-licores?page=${18}`,
 //     ".vtex-search-result-3-x-galleryItem",
@@ -336,6 +351,7 @@ for (let i = 1; i <= 6; i++) {
 // }
 
 // await ScrapMaker(
+//   9,
 //   "d1",
 //   "https://domicilios.tiendasd1.com/ca/bebidas/BEBIDAS",
 //   ".card-product-vertical.product-card-default",
@@ -345,6 +361,7 @@ for (let i = 1; i <= 6; i++) {
 // );
 
 // await ScrapMaker(
+//   6,
 //   "d1",
 //   "https://domicilios.tiendasd1.com/ca/lacteos/L%C3%81CTEOS",
 //   ".card-product-vertical.product-card-default",
@@ -353,6 +370,7 @@ for (let i = 1; i <= 6; i++) {
 //   ".prod__figure__img"
 // );
 // await ScrapMaker(
+//   1,
 //   "d1",
 //   "https://domicilios.tiendasd1.com/ca/aseo-y-cuidado-personal/ASEO%20Y%20CUIDADO%20PERSONAL",
 //   ".card-product-vertical.product-card-default",
@@ -361,6 +379,7 @@ for (let i = 1; i <= 6; i++) {
 //   ".prod__figure__img"
 // );
 // await ScrapMaker(
+//   1,
 //   "d1",
 //   "https://domicilios.tiendasd1.com/ca/aseo-hogar/ASEO%20HOGAR",
 //   ".card-product-vertical.product-card-default",
@@ -369,6 +388,7 @@ for (let i = 1; i <= 6; i++) {
 //   ".prod__figure__img"
 // );
 // await ScrapMaker(
+//   2,
 //   "d1",
 //   "https://domicilios.tiendasd1.com/ca/alimentos-y-despensa/ALIMENTOS%20Y%20DESPENSA",
 //   ".card-product-vertical.product-card-default",
@@ -377,6 +397,7 @@ for (let i = 1; i <= 6; i++) {
 //   ".prod__figure__img"
 // );
 // await ScrapMaker(
+//   5,
 //   "d1",
 //   "https://domicilios.tiendasd1.com/ca/congelados/CONGELADOS",
 //   ".card-product-vertical.product-card-default",
@@ -386,6 +407,7 @@ for (let i = 1; i <= 6; i++) {
 // );
 
 // await ScrapMaker(
+//   10,
 //   "d1",
 //   "https://domicilios.tiendasd1.com/ca/bebe/BEB%C3%89",
 //   ".card-product-vertical.product-card-default",
@@ -395,6 +417,7 @@ for (let i = 1; i <= 6; i++) {
 // );
 
 // await ScrapMaker(
+//   4,
 //   "d1",
 //   "https://domicilios.tiendasd1.com/ca/mascotas/MASCOTAS",
 //   ".card-product-vertical.product-card-default",
@@ -404,6 +427,7 @@ for (let i = 1; i <= 6; i++) {
 // );
 
 // await ScrapMaker(
+//   3,
 //   "d1",
 //   "https://domicilios.tiendasd1.com/ca/otros/OTROS",
 //   ".card-product-vertical.product-card-default",
@@ -413,6 +437,7 @@ for (let i = 1; i <= 6; i++) {
 // );
 
 // await ScrapMaker(
+//   4,
 //   "d1",
 //   "https://domicilios.tiendasd1.com/ca/alimentos-y-despensa/verduras-y-frutas/ALIMENTOS%20Y%20DESPENSA/FRUTAS%20Y%20VERDURAS-.",
 //   ".card-product-vertical.product-card-default",
@@ -422,8 +447,9 @@ for (let i = 1; i <= 6; i++) {
 // );
 
 // await ScrapMaker(
-//   "olimpica",
-//   `https://www.olimpica.com/supermercado/desayuno?page=${i}`,
+//   2,
+//   "olim",
+//   `https://www.olim.com/supermercado/desayuno?page=${i}`,
 //   ".vtex-product-summary-2-x-container",
 //   ".vtex-product-summary-2-x-productBrand",
 //   ".vtex-product-price-1-x-sellingPrice--hasListPrice--dynamicF",
