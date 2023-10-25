@@ -290,7 +290,7 @@ export const ScrapMaker = async (
   await scrap();
 };
 
-for (let i = 1; i <= 6; i++) {
+for (let i = 1; i <= 2; i++) {
   await ScrapMaker(
     4,
     "exito",
@@ -351,7 +351,7 @@ for (let i = 1; i <= 6; i++) {
 // }
 
 // await ScrapMaker(
-//   9,
+//   1,
 //   "d1",
 //   "https://domicilios.tiendasd1.com/ca/bebidas/BEBIDAS",
 //   ".card-product-vertical.product-card-default",
