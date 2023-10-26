@@ -290,7 +290,7 @@ export const ScrapMaker = async (
   await scrap();
 };
 
-for (let i = 1; i <= 2; i++) {
+for (let i = 1; i <= 6; i++) {
   await ScrapMaker(
     4,
     "exito",
@@ -302,156 +302,156 @@ for (let i = 1; i <= 2; i++) {
   );
 }
 
-// for (let i = 1; i <= 9; i++) {
-//   await ScrapMaker(
-//     5,
-//     "exito",
-//     `https://tienda.exito.com/mercado/pollo-carne-y-pescado?_ga=2.260112526.208548039.1697821974-1837544937.1697821974&_gac=1.262858366.1697838886.CjwKCAjwysipBhBXEiwApJOcu26rzZ_N5f_1p_1M5Yuvf_WaPu-IcGaCKIrkMg8oZiPnaiEQ57Kq7BoC9SIQAvD_BwE&page=${i}`,
-//     ".vtex-search-result-3-x-galleryItem",
-//     ".vtex-store-components-3-x-productBrand",
-//     ".exito-vtex-components-4-x-PricePDP > span",
-//     ".vtex-product-summary-2-x-image"
-//   );
-// }
+for (let i = 1; i <= 9; i++) {
+  await ScrapMaker(
+    5,
+    "exito",
+    `https://tienda.exito.com/mercado/pollo-carne-y-pescado?_ga=2.260112526.208548039.1697821974-1837544937.1697821974&_gac=1.262858366.1697838886.CjwKCAjwysipBhBXEiwApJOcu26rzZ_N5f_1p_1M5Yuvf_WaPu-IcGaCKIrkMg8oZiPnaiEQ57Kq7BoC9SIQAvD_BwE&page=${i}`,
+    ".vtex-search-result-3-x-galleryItem",
+    ".vtex-store-components-3-x-productBrand",
+    ".exito-vtex-components-4-x-PricePDP > span",
+    ".vtex-product-summary-2-x-image"
+  );
+}
 
-// for (let i = 1; i <= 30; i++) {
-//   await ScrapMaker(
-//     6,
-//     "exito",
-//     `https://tienda.exito.com/mercado/lacteos-huevos-y-refrigerados?page=${i}`,
-//     ".vtex-search-result-3-x-galleryItem",
-//     ".vtex-store-components-3-x-productBrand",
-//     ".exito-vtex-components-4-x-PricePDP > span",
-//     ".vtex-product-summary-2-x-image"
-//   );
-// }
+for (let i = 1; i <= 30; i++) {
+  await ScrapMaker(
+    6,
+    "exito",
+    `https://tienda.exito.com/mercado/lacteos-huevos-y-refrigerados?page=${i}`,
+    ".vtex-search-result-3-x-galleryItem",
+    ".vtex-store-components-3-x-productBrand",
+    ".exito-vtex-components-4-x-PricePDP > span",
+    ".vtex-product-summary-2-x-image"
+  );
+}
 
-// for (let i = 1; i <= 42; i++) {
-//   await ScrapMaker(
-//     7,
-//     "exito",
-//     `https://tienda.exito.com/mercado/snacks?page=${i}`,
-//     ".vtex-search-result-3-x-galleryItem",
-//     ".vtex-store-components-3-x-productBrand",
-//     ".exito-vtex-components-4-x-PricePDP > span",
-//     ".vtex-product-summary-2-x-image"
-//   );
-// }
+for (let i = 1; i <= 42; i++) {
+  await ScrapMaker(
+    7,
+    "exito",
+    `https://tienda.exito.com/mercado/snacks?page=${i}`,
+    ".vtex-search-result-3-x-galleryItem",
+    ".vtex-store-components-3-x-productBrand",
+    ".exito-vtex-components-4-x-PricePDP > span",
+    ".vtex-product-summary-2-x-image"
+  );
+}
 
-// for (let i = 1; i <= 18; i++) {
-//   await ScrapMaker(
-//     8,
-//     "exito",
-//     `https://tienda.exito.com/mercado/vinos-y-licores?page=${18}`,
-//     ".vtex-search-result-3-x-galleryItem",
-//     ".vtex-store-components-3-x-productBrand",
-//     ".exito-vtex-components-4-x-PricePDP > span",
-//     ".vtex-product-summary-2-x-image"
-//   );
-// }
+for (let i = 1; i <= 18; i++) {
+  await ScrapMaker(
+    8,
+    "exito",
+    `https://tienda.exito.com/mercado/vinos-y-licores?page=${18}`,
+    ".vtex-search-result-3-x-galleryItem",
+    ".vtex-store-components-3-x-productBrand",
+    ".exito-vtex-components-4-x-PricePDP > span",
+    ".vtex-product-summary-2-x-image"
+  );
+}
 
-// await ScrapMaker(
-//   1,
-//   "d1",
-//   "https://domicilios.tiendasd1.com/ca/bebidas/BEBIDAS",
-//   ".card-product-vertical.product-card-default",
-//   ".bWeSzf",
-//   ".bhSKFL",
-//   ".prod__figure__img"
-// );
+await ScrapMaker(
+  1,
+  "d1",
+  "https://domicilios.tiendasd1.com/ca/bebidas/BEBIDAS",
+  ".card-product-vertical.product-card-default",
+  ".bWeSzf",
+  ".bhSKFL",
+  ".prod__figure__img"
+);
 
-// await ScrapMaker(
-//   6,
-//   "d1",
-//   "https://domicilios.tiendasd1.com/ca/lacteos/L%C3%81CTEOS",
-//   ".card-product-vertical.product-card-default",
-//   ".bWeSzf",
-//   ".bhSKFL",
-//   ".prod__figure__img"
-// );
-// await ScrapMaker(
-//   1,
-//   "d1",
-//   "https://domicilios.tiendasd1.com/ca/aseo-y-cuidado-personal/ASEO%20Y%20CUIDADO%20PERSONAL",
-//   ".card-product-vertical.product-card-default",
-//   ".bWeSzf",
-//   ".bhSKFL",
-//   ".prod__figure__img"
-// );
-// await ScrapMaker(
-//   1,
-//   "d1",
-//   "https://domicilios.tiendasd1.com/ca/aseo-hogar/ASEO%20HOGAR",
-//   ".card-product-vertical.product-card-default",
-//   ".bWeSzf",
-//   ".bhSKFL",
-//   ".prod__figure__img"
-// );
-// await ScrapMaker(
-//   2,
-//   "d1",
-//   "https://domicilios.tiendasd1.com/ca/alimentos-y-despensa/ALIMENTOS%20Y%20DESPENSA",
-//   ".card-product-vertical.product-card-default",
-//   ".bWeSzf",
-//   ".bhSKFL",
-//   ".prod__figure__img"
-// );
-// await ScrapMaker(
-//   5,
-//   "d1",
-//   "https://domicilios.tiendasd1.com/ca/congelados/CONGELADOS",
-//   ".card-product-vertical.product-card-default",
-//   ".bWeSzf",
-//   ".bhSKFL",
-//   ".prod__figure__img"
-// );
+await ScrapMaker(
+  6,
+  "d1",
+  "https://domicilios.tiendasd1.com/ca/lacteos/L%C3%81CTEOS",
+  ".card-product-vertical.product-card-default",
+  ".bWeSzf",
+  ".bhSKFL",
+  ".prod__figure__img"
+);
+await ScrapMaker(
+  1,
+  "d1",
+  "https://domicilios.tiendasd1.com/ca/aseo-y-cuidado-personal/ASEO%20Y%20CUIDADO%20PERSONAL",
+  ".card-product-vertical.product-card-default",
+  ".bWeSzf",
+  ".bhSKFL",
+  ".prod__figure__img"
+);
+await ScrapMaker(
+  1,
+  "d1",
+  "https://domicilios.tiendasd1.com/ca/aseo-hogar/ASEO%20HOGAR",
+  ".card-product-vertical.product-card-default",
+  ".bWeSzf",
+  ".bhSKFL",
+  ".prod__figure__img"
+);
+await ScrapMaker(
+  2,
+  "d1",
+  "https://domicilios.tiendasd1.com/ca/alimentos-y-despensa/ALIMENTOS%20Y%20DESPENSA",
+  ".card-product-vertical.product-card-default",
+  ".bWeSzf",
+  ".bhSKFL",
+  ".prod__figure__img"
+);
+await ScrapMaker(
+  5,
+  "d1",
+  "https://domicilios.tiendasd1.com/ca/congelados/CONGELADOS",
+  ".card-product-vertical.product-card-default",
+  ".bWeSzf",
+  ".bhSKFL",
+  ".prod__figure__img"
+);
 
-// await ScrapMaker(
-//   10,
-//   "d1",
-//   "https://domicilios.tiendasd1.com/ca/bebe/BEB%C3%89",
-//   ".card-product-vertical.product-card-default",
-//   ".bWeSzf",
-//   ".bhSKFL",
-//   ".prod__figure__img"
-// );
+await ScrapMaker(
+  10,
+  "d1",
+  "https://domicilios.tiendasd1.com/ca/bebe/BEB%C3%89",
+  ".card-product-vertical.product-card-default",
+  ".bWeSzf",
+  ".bhSKFL",
+  ".prod__figure__img"
+);
 
-// await ScrapMaker(
-//   4,
-//   "d1",
-//   "https://domicilios.tiendasd1.com/ca/mascotas/MASCOTAS",
-//   ".card-product-vertical.product-card-default",
-//   ".bWeSzf",
-//   ".bhSKFL",
-//   ".prod__figure__img"
-// );
+await ScrapMaker(
+  4,
+  "d1",
+  "https://domicilios.tiendasd1.com/ca/mascotas/MASCOTAS",
+  ".card-product-vertical.product-card-default",
+  ".bWeSzf",
+  ".bhSKFL",
+  ".prod__figure__img"
+);
 
-// await ScrapMaker(
-//   3,
-//   "d1",
-//   "https://domicilios.tiendasd1.com/ca/otros/OTROS",
-//   ".card-product-vertical.product-card-default",
-//   ".bWeSzf",
-//   ".bhSKFL",
-//   ".prod__figure__img"
-// );
+await ScrapMaker(
+  3,
+  "d1",
+  "https://domicilios.tiendasd1.com/ca/otros/OTROS",
+  ".card-product-vertical.product-card-default",
+  ".bWeSzf",
+  ".bhSKFL",
+  ".prod__figure__img"
+);
 
-// await ScrapMaker(
-//   4,
-//   "d1",
-//   "https://domicilios.tiendasd1.com/ca/alimentos-y-despensa/verduras-y-frutas/ALIMENTOS%20Y%20DESPENSA/FRUTAS%20Y%20VERDURAS-.",
-//   ".card-product-vertical.product-card-default",
-//   ".bWeSzf",
-//   ".bhSKFL",
-//   ".prod__figure__img"
-// );
+await ScrapMaker(
+  4,
+  "d1",
+  "https://domicilios.tiendasd1.com/ca/alimentos-y-despensa/verduras-y-frutas/ALIMENTOS%20Y%20DESPENSA/FRUTAS%20Y%20VERDURAS-.",
+  ".card-product-vertical.product-card-default",
+  ".bWeSzf",
+  ".bhSKFL",
+  ".prod__figure__img"
+);
 
-// await ScrapMaker(
-//   2,
-//   "olim",
-//   `https://www.olim.com/supermercado/desayuno?page=${i}`,
-//   ".vtex-product-summary-2-x-container",
-//   ".vtex-product-summary-2-x-productBrand",
-//   ".vtex-product-price-1-x-sellingPrice--hasListPrice--dynamicF",
-//   ".vtex-product-summary-2-x-imageNormal"
-// );
+await ScrapMaker(
+  2,
+  "olim",
+  `https://www.olim.com/supermercado/desayuno?page=${i}`,
+  ".vtex-product-summary-2-x-container",
+  ".vtex-product-summary-2-x-productBrand",
+  ".vtex-product-price-1-x-sellingPrice--hasListPrice--dynamicF",
+  ".vtex-product-summary-2-x-imageNormal"
+);

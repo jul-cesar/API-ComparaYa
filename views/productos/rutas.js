@@ -8,6 +8,8 @@ import {
   addProducto,
   updateProduct,
   SumPrice,
+  getProductosPaginados,
+  getProductosByCategory,
 } from "../../controllers/productos/controller.js";
 
 const rutasProductos = Express.Router();
@@ -16,6 +18,41 @@ const rutasProductos = Express.Router();
 rutasProductos.route("/productos").get(async (req, res) => {
   try {
     const prods = await getProductos();
+    if (!prods) {
+      return res
+        .status(404)
+        .send("No se encontraron productos o prende el xamp xd");
+    }
+    res.status(200).send(prods);
+  } catch (error) {
+    console.error("Error al obtener los productos", error);
+    res.status(500).send("Ocurrió un error al obtener los productos");
+  }
+});
+
+rutasProductos.route("/productos/categoria/:id").get(async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const prods = await getProductosByCategory(id);
+
+    if (!prods) {
+      return res
+        .status(404)
+        .send("No se encontraron productos o prende el xamp xd");
+    }
+    res.status(200).send(prods);
+  } catch (error) {
+    console.error("Error al obtener los productos", error);
+    res.status(500).send("Ocurrió un error al obtener los productos");
+  }
+});
+
+rutasProductos.route("/productos/:page/:limit").get(async (req, res) => {
+  try {
+    const page = parseInt(req.params.page, 10);
+    const limit = parseInt(req.params.limit, 10);
+    const prods = await getProductosPaginados(page, limit);
+
     if (!prods) {
       return res
         .status(404)

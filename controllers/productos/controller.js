@@ -1,6 +1,46 @@
 import { PoolDB } from "../../db/db.js";
 const pool = PoolDB();
 
+export const getProductosPaginados = async (page, limit) => {
+  try {
+    const offset = (page - 1) * limit;
+
+    // Uso de consultas preparadas para prevenir la inyección SQL
+    const query = "SELECT * FROM productos LIMIT ?, ?";
+    const values = [offset, limit];
+    const result = await pool.query(query, values);
+
+    if (!Array.isArray(result) || result.length < 1) {
+      throw new Error("No se encontraron productos");
+    }
+
+    return result[0];
+  } catch (error) {
+    console.error("Error al traer todos los productos", error);
+    throw error; // Lanzar el error para ser capturado por el llamador
+  }
+};
+
+
+export const getProductosByCategory= async (id) => {
+  try {
+  
+
+    const query = "SELECT * FROM productos where categoria_id = ?";
+    const values = [id];
+    const result = await pool.query(query, values);
+
+    if (!Array.isArray(result) || result.length < 1) {
+      throw new Error("No se encontraron productos");
+    }
+
+    return result[0];
+  } catch (error) {
+    console.error("Error al traer todos los productos", error);
+    throw error; // Lanzar el error para ser capturado por el llamador
+  }
+};
+
 export const getProductos = async () => {
   try {
     const result = await pool.query("SELECT * from productos");
