@@ -6,6 +6,7 @@ import {
   deleteCategoria,
   addCategoria,
   updateCategoria,
+  getOneCategoriaByName,
 } from "../../controllers/categorias/controller.js";
 
 const rutasCategorias = Express.Router();
@@ -14,6 +15,22 @@ const rutasCategorias = Express.Router();
 rutasCategorias.route("/categorias").get(async (req, res) => {
   try {
     const cats = await getCategorias();
+    if (!cats) {
+      return res
+        .status(404)
+        .send("No se encontraron categorías o prende el xamp xd");
+    }
+    res.status(200).send(cats);
+  } catch (error) {
+    console.error("Error al obtener las categorías", error);
+    res.status(500).send("Ocurrió un error al obtener las categorías");
+  }
+});
+
+rutasCategorias.route("/categorias/:nombre").get(async (req, res) => {
+  try {
+    const nombre = req.params.nombre
+    const cats = await getOneCategoriaByName(nombre);
     if (!cats) {
       return res
         .status(404)

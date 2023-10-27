@@ -23,10 +23,19 @@ export const getCategorias = async () => {
       console.error("Error al traer una categoría", error);
     }
   };
+
+  export const getOneCategoriaByName = async (nombre) => {
+    try {
+      const result = await pool.query("SELECT * FROM categorias WHERE nombre = ?", [nombre]);
+      return result[0][0];
+    } catch (error) {
+      console.error("Error al traer una categoría", error);
+    }
+  };
   
   export const deleteCategoria = async (id) => {
     try {
-      const result = await pool.query("DELETE FROM categorias WHERE id = ?", id);
+      const result = await pool.query("DELETE FROM categorias WHERE id = ?", [id]);
       return result;
     } catch (error) {
       console.error("Error al eliminar una categoría", error);

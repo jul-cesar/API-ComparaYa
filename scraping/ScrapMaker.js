@@ -4,9 +4,12 @@ import {
   getProductos,
   updateProduct,
 } from "../controllers/productos/controller.js";
+import {
+  addCategoria,
+  getOneCategoriaByName,
+} from "../controllers/categorias/controller.js";
 
 export const ScrapMaker = async (
-  categoria,
   distribuidora,
   url,
   cardSelector,
@@ -37,6 +40,24 @@ export const ScrapMaker = async (
       } catch (error) {
         console.error("Error adding product to database:", error);
       }
+    }
+  };
+
+  const getCategoryFromDb = async (categoria) => {
+    try {
+      const result = await getOneCategoriaByName(categoria);
+      return result.id;
+    } catch (e) {
+      console.error("error al agregar categoria");
+    }
+  };
+
+  const addCategoryToDb = async (categoria) => {
+    try {
+      const result = await addCategoria(categoria);
+      return result[0].insertId;
+    } catch (e) {
+      console.error("error al agregar categoria");
     }
   };
 
@@ -102,12 +123,62 @@ export const ScrapMaker = async (
   const scrap = async () => {
     try {
       console.log(`Scraping page: ${url}`);
-      const browser = await puppeteer.launch();
+      const browser = await puppeteer.launch({ headless: false });
 
       const page = await browser.newPage();
 
       await page.goto(url);
-      // const productsExist = await page.$(cardSelector);
+      await new Promise((r) => setTimeout(r, 3000));
+
+      // // const productsExist = await page.$(cardSelector);
+      // const categoria = await page.evaluate((categoriaSelector) => {
+      //   const categoriaElement = document.querySelector(categoriaSelector);
+      //   return categoriaElement ? categoriaElement.innerText : null;
+      // }, categoriaSelector);
+
+      function getCategory(distribuidora, url) {
+        const pageUrl = new URL(url);
+        let index;
+
+        switch (distribuidora) {
+          case "d1":
+            index = 3;
+            break;
+          case "olimpica":
+            index = 2;
+            break;
+          default:
+            index = 2;
+            break;
+        }
+
+        return pageUrl.pathname.split("/")[index];
+      }
+
+      const categoria = getCategory(distribuidora, url);
+
+      if (categoria) {
+        console.log(`Categoría de la página: ${categoria}`);
+      } else {
+        console.error(
+          `No se pudo encontrar la categoría utilizando el selector: ${categoriaSelector}`
+        );
+      }
+
+      const categoriaId = async () => {
+        const categoriaIdd = await getCategoryFromDb(categoria);
+
+        if (!categoriaIdd) {
+          // La categoría no existe en la base de datos
+          const categoriaIdN = await addCategoryToDb(categoria);
+          console.log(
+            `Categoría '${categoria}' agregada con ID ${categoriaIdN}`
+          );
+          return categoriaIdN;
+        } else {
+          return categoriaIdd;
+        }
+      };
 
       console.log("Waiting for card selector...");
       await page.waitForSelector(cardSelector, { timeout: 60000 });
@@ -127,17 +198,18 @@ export const ScrapMaker = async (
 
       await autoScroll(page);
 
-      //       if (distribuidora == "exito") {
+      // cambiar ubicacion exito
 
-      //         await page.click('body');
+      // if (distribuidora == "exito") {
+      //   await page.click("body");
 
-      // // Esperar a que el modal se cierre
+      // Esperar a que el modal se cierre
 
-      // // Verificar que el modal se ha cerrado
+      // Verificar que el modal se ha cerrado
       // await page.waitForSelector('#wps-overlay-close-button', { visible: true });
 
       //   // Agregar un pequeño delay
-      //    new Promise(r => setTimeout(r, 5000));
+      // new Promise((r) => setTimeout(r, 2000));
 
       //   // Hacer clic en el botón de cierre del modal
       //   await page.evaluate(() => {
@@ -156,55 +228,32 @@ export const ScrapMaker = async (
       //     console.log('El modal no se ha cerrado');
       //   }
 
-      //         // Esperar a que el modal se cierre
+      // Esperar a que el modal se cierre
 
-      //         const input1Value = "sincelejo";
-      //         const input2Value = "exito sincelejo";
+      //   const input1Value = "sincelejo";
+      //   const input2Value = "exito sincelejo";
 
-      //         await page.evaluate(
-      //           (input1Value, input2Value) => {
-      //             const shadowHost = document.querySelector(
-      //               ".exito-geolocation-3-x-modalContainer"
-      //             );
-      //             if (shadowHost) {
-      //               const shadowRoot = shadowHost.shadowRoot;
-      //               if (shadowRoot) {
+      //   const inputs = document.querySelectorAll([
+      //     ".css-1g6gooi > div > input",
+      //   ]);
 
-      //                 const inputs = document.querySelectorAll(['.css-1g6gooi > div > input'])
+      //   const input1 = inputs[0];
 
-      //                 const input1 = shadowRoot.inputs[0]
+      //   const input2 = inputs[1];
 
-      //                 const input2 =  shadowRoot.inputs [1]
-
-      //                 const boton = shadowRoot.querySelector(
-      //                   ".exito-geolocation-3-x-primaryButtonEnable"
-      //                 );
-
-      //                 if (input1 && input2 && boton) {
-      //                   input1.value = input1Value;
-      //                   input2.value = input2Value;
-      //                   boton.click();
-      //                 } else {
-      //                   console.error(
-      //                     "No se encontraron los elementos dentro del Shadow DOM"
-      //                   );
-      //                 }
-      //               } else {
-      //                 console.error("No se encontró el Shadow DOM");
-      //               }
-      //             } else {
-      //               console.error("No se encontró el Shadow Host");
-      //             }
-      //           },
-      //           input1Value,
-      //           input2Value
-      //         );
-      //       }
+      //   const boton = document.querySelector(
+      //     ".exito-geolocation-3-x-primaryButtonEnable"
+      //   );
+      //   await page.type(input1, input1Value)
+      //   await page.type(input2, input2Value)
+      //   await page.click(boton)
+      // }
+      const categoryIdValue = await categoriaId();
 
       const productData = await page.evaluate(
         (
+          categoryIdValue,
           distribuidora,
-          categoria,
           cardSelector,
           nombreSelector,
           precioSelector,
@@ -223,7 +272,7 @@ export const ScrapMaker = async (
               precio_d1: "0",
               precio_olim: "0",
               precio_exito: "0",
-              categoria_id: categoria,
+              categoria_id: categoryIdValue,
             };
 
             if (distribuidora === "olimpica") {
@@ -243,20 +292,14 @@ export const ScrapMaker = async (
             return baseProduct;
           });
         },
+        categoryIdValue,
         distribuidora,
-        categoria,
         cardSelector,
         nombreSelector,
         precioSelector,
         imgSelector
       );
-      //  const ejemplo = [{
-      //         nombre: "Piña unidad",
-      //         categoria: "fruta",
-      //         precio_d1: "9000",
-      //         precio_olim: "8000",
-      //         precio_exito: " 8.090"
-      //       }]
+
       const prodsOnDb = await getProductos();
       const updatedData = await updateProducts(productData, prodsOnDb);
       await addToDb(updatedData);
@@ -292,7 +335,6 @@ export const ScrapMaker = async (
 
 for (let i = 1; i <= 6; i++) {
   await ScrapMaker(
-    4,
     "exito",
     `https://tienda.exito.com/mercado/frutas-y-verduras?page=${i}`,
     ".vtex-search-result-3-x-galleryItem",
@@ -302,156 +344,23 @@ for (let i = 1; i <= 6; i++) {
   );
 }
 
-for (let i = 1; i <= 9; i++) {
-  await ScrapMaker(
-    5,
-    "exito",
-    `https://tienda.exito.com/mercado/pollo-carne-y-pescado?_ga=2.260112526.208548039.1697821974-1837544937.1697821974&_gac=1.262858366.1697838886.CjwKCAjwysipBhBXEiwApJOcu26rzZ_N5f_1p_1M5Yuvf_WaPu-IcGaCKIrkMg8oZiPnaiEQ57Kq7BoC9SIQAvD_BwE&page=${i}`,
-    ".vtex-search-result-3-x-galleryItem",
-    ".vtex-store-components-3-x-productBrand",
-    ".exito-vtex-components-4-x-PricePDP > span",
-    ".vtex-product-summary-2-x-image"
-  );
-}
+// await ScrapMaker(
+//   "d1",
+//   "https://domicilios.tiendasd1.com/ca/bebidas/BEBIDAS",
+//   ".card-product-vertical.product-card-default",
+//   ".bWeSzf",
+//   ".bhSKFL",
+//   ".prod__figure__img"
+// );
 
-for (let i = 1; i <= 30; i++) {
-  await ScrapMaker(
-    6,
-    "exito",
-    `https://tienda.exito.com/mercado/lacteos-huevos-y-refrigerados?page=${i}`,
-    ".vtex-search-result-3-x-galleryItem",
-    ".vtex-store-components-3-x-productBrand",
-    ".exito-vtex-components-4-x-PricePDP > span",
-    ".vtex-product-summary-2-x-image"
-  );
-}
-
-for (let i = 1; i <= 42; i++) {
-  await ScrapMaker(
-    7,
-    "exito",
-    `https://tienda.exito.com/mercado/snacks?page=${i}`,
-    ".vtex-search-result-3-x-galleryItem",
-    ".vtex-store-components-3-x-productBrand",
-    ".exito-vtex-components-4-x-PricePDP > span",
-    ".vtex-product-summary-2-x-image"
-  );
-}
-
-for (let i = 1; i <= 18; i++) {
-  await ScrapMaker(
-    8,
-    "exito",
-    `https://tienda.exito.com/mercado/vinos-y-licores?page=${18}`,
-    ".vtex-search-result-3-x-galleryItem",
-    ".vtex-store-components-3-x-productBrand",
-    ".exito-vtex-components-4-x-PricePDP > span",
-    ".vtex-product-summary-2-x-image"
-  );
-}
-
-await ScrapMaker(
-  1,
-  "d1",
-  "https://domicilios.tiendasd1.com/ca/bebidas/BEBIDAS",
-  ".card-product-vertical.product-card-default",
-  ".bWeSzf",
-  ".bhSKFL",
-  ".prod__figure__img"
-);
-
-await ScrapMaker(
-  6,
-  "d1",
-  "https://domicilios.tiendasd1.com/ca/lacteos/L%C3%81CTEOS",
-  ".card-product-vertical.product-card-default",
-  ".bWeSzf",
-  ".bhSKFL",
-  ".prod__figure__img"
-);
-await ScrapMaker(
-  1,
-  "d1",
-  "https://domicilios.tiendasd1.com/ca/aseo-y-cuidado-personal/ASEO%20Y%20CUIDADO%20PERSONAL",
-  ".card-product-vertical.product-card-default",
-  ".bWeSzf",
-  ".bhSKFL",
-  ".prod__figure__img"
-);
-await ScrapMaker(
-  1,
-  "d1",
-  "https://domicilios.tiendasd1.com/ca/aseo-hogar/ASEO%20HOGAR",
-  ".card-product-vertical.product-card-default",
-  ".bWeSzf",
-  ".bhSKFL",
-  ".prod__figure__img"
-);
-await ScrapMaker(
-  2,
-  "d1",
-  "https://domicilios.tiendasd1.com/ca/alimentos-y-despensa/ALIMENTOS%20Y%20DESPENSA",
-  ".card-product-vertical.product-card-default",
-  ".bWeSzf",
-  ".bhSKFL",
-  ".prod__figure__img"
-);
-await ScrapMaker(
-  5,
-  "d1",
-  "https://domicilios.tiendasd1.com/ca/congelados/CONGELADOS",
-  ".card-product-vertical.product-card-default",
-  ".bWeSzf",
-  ".bhSKFL",
-  ".prod__figure__img"
-);
-
-await ScrapMaker(
-  10,
-  "d1",
-  "https://domicilios.tiendasd1.com/ca/bebe/BEB%C3%89",
-  ".card-product-vertical.product-card-default",
-  ".bWeSzf",
-  ".bhSKFL",
-  ".prod__figure__img"
-);
-
-await ScrapMaker(
-  4,
-  "d1",
-  "https://domicilios.tiendasd1.com/ca/mascotas/MASCOTAS",
-  ".card-product-vertical.product-card-default",
-  ".bWeSzf",
-  ".bhSKFL",
-  ".prod__figure__img"
-);
-
-await ScrapMaker(
-  3,
-  "d1",
-  "https://domicilios.tiendasd1.com/ca/otros/OTROS",
-  ".card-product-vertical.product-card-default",
-  ".bWeSzf",
-  ".bhSKFL",
-  ".prod__figure__img"
-);
-
-await ScrapMaker(
-  4,
-  "d1",
-  "https://domicilios.tiendasd1.com/ca/alimentos-y-despensa/verduras-y-frutas/ALIMENTOS%20Y%20DESPENSA/FRUTAS%20Y%20VERDURAS-.",
-  ".card-product-vertical.product-card-default",
-  ".bWeSzf",
-  ".bhSKFL",
-  ".prod__figure__img"
-);
-
-await ScrapMaker(
-  2,
-  "olim",
-  `https://www.olim.com/supermercado/desayuno?page=${i}`,
-  ".vtex-product-summary-2-x-container",
-  ".vtex-product-summary-2-x-productBrand",
-  ".vtex-product-price-1-x-sellingPrice--hasListPrice--dynamicF",
-  ".vtex-product-summary-2-x-imageNormal"
-);
+// for (let i = 1; i <= 4; i++) {
+//   await ScrapMaker(
+//     ".t-heading-1",
+//     "olim",
+//     `https://www.olimpica.com/supermercado/desayuno?page=${i}`,
+//     ".vtex-product-summary-2-x-container",
+//     ".vtex-product-summary-2-x-productBrand",
+//     ".vtex-product-price-1-x-sellingPrice--hasListPrice--dynamicF",
+//     ".vtex-product-summary-2-x-imageNormal"
+//   );
+// }
