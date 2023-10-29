@@ -8,6 +8,7 @@ import {
   addCategoria,
   getOneCategoriaByName,
 } from "../controllers/categorias/controller.js";
+import { getScrapingConfig } from "../controllers/scraping_config;/controller.js";
 
 export const ScrapMaker = async (
   distribuidora,
@@ -123,13 +124,17 @@ export const ScrapMaker = async (
   const scrap = async () => {
     try {
       console.log(`Scraping page: ${url}`);
-      const browser = await puppeteer.launch({ headless: false });
+      const browser = await puppeteer.launch({
+        headless: false,
+        executablePath:
+          "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+        userDataDir:
+          "C:\\Users\\julio\\AppData\\Local\\Google\\Chrome\\User Data",
+      });
 
       const page = await browser.newPage();
 
       await page.goto(url);
-      await new Promise((r) => setTimeout(r, 3000));
-
       // // const productsExist = await page.$(cardSelector);
       // const categoria = await page.evaluate((categoriaSelector) => {
       //   const categoriaElement = document.querySelector(categoriaSelector);
@@ -142,7 +147,7 @@ export const ScrapMaker = async (
 
         switch (distribuidora) {
           case "d1":
-            index = 3;
+            index = 2;
             break;
           case "olimpica":
             index = 2;
@@ -196,8 +201,6 @@ export const ScrapMaker = async (
       await page.waitForSelector(imgSelector, { timeout: 60000 });
       console.log("Img selector found.");
 
-      await autoScroll(page);
-
       // cambiar ubicacion exito
 
       // if (distribuidora == "exito") {
@@ -248,6 +251,39 @@ export const ScrapMaker = async (
       //   await page.type(input2, input2Value)
       //   await page.click(boton)
       // }
+      // if (distribuidora === "olimpica") {
+      //   // Click on the element to open the dialog
+      //   await page.click(".ph8-ns");
+
+      //   // Wait for the dialog to appear
+      //   await page.waitForSelector(".styles_modal__gNwvD", { visible: true });
+
+      //   // Now, interact with the elements in the dialog, for example:
+      //   await page.select(
+      //     "#react-select-input-f68fd246-a3a7-4f81-acc3-a3bbae84fa94",
+      //     "SUCRE"
+      //   );
+      //   await page.select(
+      //     "#react-select-input-7725a165-6bca-4244-8d38-010a54876015",
+      //     "Sincelejo"
+      //   );
+      //   // Type the city name
+      //   await page.click(
+      //     '."body > div:nth-child(142) > div > div > div.flex.justify-content.flex-row-reverse.bt.b--muted-4.ph6.ph8-ns.pv5.pv6-ns.vtex-styleguide-9-x-shadowTransition > div > span:nth-child(2) > button"'
+      //   ); // Click the button to confirm the city
+
+      //   // Wait for the dialog to disappear (assuming it closes after city selection)
+      //   await page.waitForSelector(".your-dialog-selector", { hidden: true });
+
+      //   // Continue with scrolling and scraping products
+      //   await autoScroll(page);
+      //   // ... Your scraping logic ...
+      // }
+
+      if(distribuidora !== "olimpica"){
+        await autoScroll(page);
+      }
+    
       const categoryIdValue = await categoriaId();
 
       const productData = await page.evaluate(
@@ -256,15 +292,15 @@ export const ScrapMaker = async (
           distribuidora,
           cardSelector,
           nombreSelector,
-          precioSelector,
-          imgSelector
+          imgSelector,
+          precioSelector
         ) => {
           const productsCards = document.querySelectorAll(cardSelector);
           return Array.from(productsCards).map((prod) => {
             const shadowRoot = prod.shadowRoot || prod;
+            const imgEl = shadowRoot.querySelector(imgSelector);
             const nombreEl = shadowRoot.querySelector(nombreSelector);
             const precioEl = shadowRoot.querySelector(precioSelector);
-            const imgEl = shadowRoot.querySelector(imgSelector);
 
             const baseProduct = {
               nombre: nombreEl ? nombreEl.innerText : "N/A",
@@ -277,15 +313,21 @@ export const ScrapMaker = async (
 
             if (distribuidora === "olimpica") {
               baseProduct.precio_olim = precioEl
-                ? precioEl.innerText.replace("$", "")
+                ? precioEl.innerText.includes("$")
+                  ? precioEl.innerText.replace("$", "")
+                  : precioEl.innerText
                 : "N/A";
             } else if (distribuidora === "d1") {
               baseProduct.precio_d1 = precioEl
-                ? precioEl.innerText.replace("$", "")
+                ? precioEl.innerText.includes("$")
+                  ? precioEl.innerText.replace("$", "")
+                  : precioEl.innerText
                 : "N/A";
             } else {
               baseProduct.precio_exito = precioEl
-                ? precioEl.innerText.replace("$", "")
+                ? precioEl.innerText.includes("$")
+                  ? precioEl.innerText.replace("$", "")
+                  : precioEl.innerText
                 : "N/A";
             }
 
@@ -296,8 +338,8 @@ export const ScrapMaker = async (
         distribuidora,
         cardSelector,
         nombreSelector,
-        precioSelector,
-        imgSelector
+        imgSelector,
+        precioSelector
       );
 
       const prodsOnDb = await getProductos();
@@ -314,53 +356,50 @@ export const ScrapMaker = async (
   async function autoScroll(page) {
     await page.evaluate(async () => {
       await new Promise((resolve) => {
-        var totalHeight = 0;
-        var distance = 100;
-        var timer = setInterval(() => {
-          var scrollHeight = document.body.scrollHeight;
-          window.scrollBy(0, distance);
-          totalHeight += distance;
-
-          if (totalHeight >= scrollHeight) {
-            clearInterval(timer);
+        let totalHeight = 0;
+        const scrollInterval = 500; // Scroll every 100ms
+        const scrollStep = 200; // Scroll 250px at a time
+  
+        const scrollIntervalId = setInterval(() => {
+          const maxScrollHeight = document.body.scrollHeight;
+          window.scrollBy(0, scrollStep);
+          totalHeight += scrollStep;
+  
+          if (totalHeight >= maxScrollHeight) {
+            clearInterval(scrollIntervalId);
             resolve();
           }
-        }, 100);
+        }, scrollInterval);
       });
     });
   }
+  
 
   await scrap();
 };
 
-for (let i = 1; i <= 6; i++) {
-  await ScrapMaker(
-    "exito",
-    `https://tienda.exito.com/mercado/frutas-y-verduras?page=${i}`,
-    ".vtex-search-result-3-x-galleryItem",
-    ".vtex-store-components-3-x-productBrand",
-    ".exito-vtex-components-4-x-PricePDP > span",
-    ".vtex-product-summary-2-x-image"
-  );
+const getScrapingConfigV = await getScrapingConfig();
+
+for (let config of getScrapingConfigV) {
+  if (config.page_param_name > 0) {
+    for (let i = 1; i <= config.page_param_name; i++) {
+      await ScrapMaker(
+        `${config.website_name}`,
+        `${config.base_url}?page=${i}`,
+        `${config.card_selector}`,
+        `${config.nombre_selector}`,
+        `${config.precio_selector}`,
+        `${config.img_selector}`
+      );
+    }
+  } else {
+    await ScrapMaker(
+      `${config.website_name}`,
+      `${config.base_url}`,
+      `${config.card_selector}`,
+      `${config.nombre_selector}`,
+      `${config.precio_selector}`,
+      `${config.img_selector}`
+    );
+  }
 }
-
-// await ScrapMaker(
-//   "d1",
-//   "https://domicilios.tiendasd1.com/ca/bebidas/BEBIDAS",
-//   ".card-product-vertical.product-card-default",
-//   ".bWeSzf",
-//   ".bhSKFL",
-//   ".prod__figure__img"
-// );
-
-// for (let i = 1; i <= 4; i++) {
-//   await ScrapMaker(
-//     ".t-heading-1",
-//     "olim",
-//     `https://www.olimpica.com/supermercado/desayuno?page=${i}`,
-//     ".vtex-product-summary-2-x-container",
-//     ".vtex-product-summary-2-x-productBrand",
-//     ".vtex-product-price-1-x-sellingPrice--hasListPrice--dynamicF",
-//     ".vtex-product-summary-2-x-imageNormal"
-//   );
-// }

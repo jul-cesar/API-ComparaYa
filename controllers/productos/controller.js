@@ -5,7 +5,6 @@ export const getProductosPaginados = async (page, limit) => {
   try {
     const offset = (page - 1) * limit;
 
-    // Uso de consultas preparadas para prevenir la inyección SQL
     const query = "SELECT * FROM productos LIMIT ?, ?";
     const values = [offset, limit];
     const result = await pool.query(query, values);
@@ -17,15 +16,12 @@ export const getProductosPaginados = async (page, limit) => {
     return result[0];
   } catch (error) {
     console.error("Error al traer todos los productos", error);
-    throw error; // Lanzar el error para ser capturado por el llamador
+    throw error;
   }
 };
 
-
-export const getProductosByCategory= async (id) => {
+export const getProductosByCategory = async (id) => {
   try {
-  
-
     const query = "SELECT * FROM productos where categoria_id = ?";
     const values = [id];
     const result = await pool.query(query, values);
@@ -37,7 +33,7 @@ export const getProductosByCategory= async (id) => {
     return result[0];
   } catch (error) {
     console.error("Error al traer todos los productos", error);
-    throw error; // Lanzar el error para ser capturado por el llamador
+    throw error;
   }
 };
 
@@ -102,7 +98,7 @@ export const updateProduct = async (
 ) => {
   try {
     const result = await pool.query(
-      "update productos set nombre = ?, categoria_id = ?, precio_d1 = ?, precio_olim= ?, precio_exito = ? where id = ?",
+      "update productos set nombre = ?, imagen_url = ?, precio_d1 = ?, precio_olim= ?, precio_exito = ?, categoria_id = ? where id = ?",
       [
         newNombre,
         newImagen_url,
@@ -110,7 +106,6 @@ export const updateProduct = async (
         newPrecio_olim,
         newPrecio_exito,
         newCategoria_id,
-
         id,
       ]
     );
