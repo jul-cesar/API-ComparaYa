@@ -62,64 +62,64 @@ export const ScrapMaker = async (
     }
   };
 
-  const updateProducts = async (data, prodsOnDb) => {
-    for (const prod of data) {
-      const existingProd = prodsOnDb.find(
-        (p) =>
-          p.nombre.toLowerCase() === prod.nombre.toLowerCase() &&
-          p.categoria_id === prod.categoria_id
-      );
-      if (existingProd) {
-        let needsUpdate = false;
+  // const updateProducts = async (data, prodsOnDb) => {
+  //   for (const prod of data) {
+  //     const existingProd = prodsOnDb.find(
+  //       (p) =>
+  //         p.nombre.toLowerCase() === prod.nombre.toLowerCase() &&
+  //         p.categoria_id === prod.categoria_id
+  //     );
+  //     if (existingProd) {
+  //       let needsUpdate = false;
 
-        if (prod.precio_d1 !== 0 && prod.precio_d1 !== existingProd.precio_d1) {
-          existingProd.precio_d1 = prod.precio_d1;
-          needsUpdate = true;
-        }
-        if (
-          prod.precio_exito !== 0 &&
-          prod.precio_exito !== existingProd.precio_exito
-        ) {
-          existingProd.precio_exito = prod.precio_exito;
-          needsUpdate = true;
-        }
-        if (
-          prod.precio_olim !== 0 &&
-          prod.precio_olim !== existingProd.precio_olim
-        ) {
-          existingProd.precio_olim = prod.precio_olim;
-          needsUpdate = true;
-        }
+  //       if (prod.precio_d1 !== 0 && prod.precio_d1 !== existingProd.precio_d1) {
+  //         existingProd.precio_d1 = prod.precio_d1;
+  //         needsUpdate = true;
+  //       }
+  //       if (
+  //         prod.precio_exito !== 0 &&
+  //         prod.precio_exito !== existingProd.precio_exito
+  //       ) {
+  //         existingProd.precio_exito = prod.precio_exito;
+  //         needsUpdate = true;
+  //       }
+  //       if (
+  //         prod.precio_olim !== 0 &&
+  //         prod.precio_olim !== existingProd.precio_olim
+  //       ) {
+  //         existingProd.precio_olim = prod.precio_olim;
+  //         needsUpdate = true;
+  //       }
 
-        if (needsUpdate) {
-          const {
-            id,
-            nombre,
-            imagen_url,
-            precio_d1,
-            precio_olim,
-            precio_exito,
-            categoria_id,
-          } = existingProd;
-          await updateProduct(
-            id,
-            nombre,
-            imagen_url,
-            precio_d1,
-            precio_olim,
-            precio_exito,
-            categoria_id
-          );
-        }
-      }
-    }
-    return data.filter(
-      (prod) =>
-        !prodsOnDb.some(
-          (p) => p.nombre.toLowerCase() === prod.nombre.toLowerCase()
-        )
-    );
-  };
+  //       if (needsUpdate) {
+  //         const {
+  //           id,
+  //           nombre,
+  //           imagen_url,
+  //           precio_d1,
+  //           precio_olim,
+  //           precio_exito,
+  //           categoria_id,
+  //         } = existingProd;
+  //         await updateProduct(
+  //           id,
+  //           nombre,
+  //           imagen_url,
+  //           precio_d1,
+  //           precio_olim,
+  //           precio_exito,
+  //           categoria_id
+  //         );
+  //       }
+  //     }
+  //   }
+  //   return data.filter(
+  //     (prod) =>
+  //       !prodsOnDb.some(
+  //         (p) => p.nombre.toLowerCase() === prod.nombre.toLowerCase()
+  //       )
+  //   );
+  // };
 
   const scrap = async () => {
     try {
@@ -343,10 +343,10 @@ export const ScrapMaker = async (
       );
 
       const prodsOnDb = await getProductos();
-      const updatedData = await updateProducts(productData, prodsOnDb);
-      await addToDb(updatedData);
+      // const updatedData = await updateProducts(productData, prodsOnDb);
+      await addToDb(productData);
 
-      console.log(updatedData);
+      console.log(productData);
       await browser.close();
     } catch (error) {
       console.error("Error during scraping:", error);

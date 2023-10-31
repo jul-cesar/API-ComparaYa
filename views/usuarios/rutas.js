@@ -6,6 +6,7 @@ import {
   deleteUsuario,
   addUsuario,
   updateUsuario,
+  getUsuarioNombre,
 } from "../../controllers/usuarios/controller.js";
 
 const rutasUsuarios = Express.Router();
@@ -89,6 +90,21 @@ rutasUsuarios.route("/usuarios/:id").put(async (req, res) => {
     res
       .status(500)
       .json({ error: "Ocurrió un error al actualizar el usuario" });
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+rutasUsuarios.route("/usuarionombre/:email").get(async (req, res) => {
+  try {
+    const email = req.params.email;
+
+    const result = await getUsuarioNombre(email);
+
+    if (!result) {
+      return res.status(404).json({ error: "Nombre de usuario no encontrado" });
+    }
+    res.status(200).json(result);
   } catch (error) {
     console.error(error);
   }

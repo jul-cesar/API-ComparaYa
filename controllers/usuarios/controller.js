@@ -24,6 +24,18 @@ export const getOneUsuario = async (id) => {
   }
 };
 
+export const getUsuarioNombre = async (email) => {
+  try {
+    const result = await pool.query("SELECT nombre FROM usuarios WHERE correo = ?", email);
+    return result[0][0];
+  } catch (error) {
+    console.error("Error al traer el nombre de un usuario", error);
+  }
+};
+
+
+
+
 export const deleteUsuario = async (id) => {
   try {
     const result = await pool.query("DELETE FROM usuarios WHERE id = ?", id);
