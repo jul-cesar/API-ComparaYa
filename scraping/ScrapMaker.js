@@ -156,8 +156,13 @@ export const ScrapMaker = async (
             index = 2;
             break;
         }
-
-        return pageUrl.pathname.split("/")[index];
+        let catIrre = pageUrl.pathname.split("/")[index];
+        if(catIrre.includes("-")){
+          catIrre = catIrre.replace("-", " ");
+          return catIrre
+        } else{
+          return catIrre
+        }
       }
 
       const categoria = getCategory(distribuidora, url);
@@ -166,7 +171,7 @@ export const ScrapMaker = async (
         console.log(`Categoría de la página: ${categoria}`);
       } else {
         console.error(
-          `No se pudo encontrar la categoría utilizando el selector: ${categoriaSelector}`
+          `No se pudo encontrar la categoría`
         );
       }
 
@@ -280,7 +285,7 @@ export const ScrapMaker = async (
       //   // ... Your scraping logic ...
       // }
 
-      if(distribuidora !== "olimpica"){
+      if(distribuidora === "exito" || distribuidora === "d1"){
         await autoScroll(page);
       }
     
@@ -357,8 +362,8 @@ export const ScrapMaker = async (
     await page.evaluate(async () => {
       await new Promise((resolve) => {
         let totalHeight = 0;
-        const scrollInterval = 500; // Scroll every 100ms
-        const scrollStep = 200; // Scroll 250px at a time
+        const scrollInterval = 100; 
+        const scrollStep = 500; 
   
         const scrollIntervalId = setInterval(() => {
           const maxScrollHeight = document.body.scrollHeight;
@@ -403,3 +408,4 @@ for (let config of getScrapingConfigV) {
     );
   }
 }
+
