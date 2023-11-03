@@ -157,11 +157,11 @@ export const ScrapMaker = async (
             break;
         }
         let catIrre = pageUrl.pathname.split("/")[index];
-        if(catIrre.includes("-")){
-          catIrre = catIrre.replace("-", " ");
-          return catIrre
-        } else{
-          return catIrre
+        if (catIrre.includes("-")) {
+          catIrre = catIrre = catIrre.replace(/-/g, " ");
+          return catIrre;
+        } else {
+          return catIrre;
         }
       }
 
@@ -170,9 +170,7 @@ export const ScrapMaker = async (
       if (categoria) {
         console.log(`Categoría de la página: ${categoria}`);
       } else {
-        console.error(
-          `No se pudo encontrar la categoría`
-        );
+        console.error(`No se pudo encontrar la categoría`);
       }
 
       const categoriaId = async () => {
@@ -285,10 +283,10 @@ export const ScrapMaker = async (
       //   // ... Your scraping logic ...
       // }
 
-      if(distribuidora === "exito" || distribuidora === "d1"){
+      if (distribuidora === "exito" || distribuidora === "d1") {
         await autoScroll(page);
       }
-    
+
       const categoryIdValue = await categoriaId();
 
       const productData = await page.evaluate(
@@ -362,14 +360,14 @@ export const ScrapMaker = async (
     await page.evaluate(async () => {
       await new Promise((resolve) => {
         let totalHeight = 0;
-        const scrollInterval = 100; 
-        const scrollStep = 500; 
-  
+        const scrollInterval = 100;
+        const scrollStep = 250;
+
         const scrollIntervalId = setInterval(() => {
           const maxScrollHeight = document.body.scrollHeight;
           window.scrollBy(0, scrollStep);
           totalHeight += scrollStep;
-  
+
           if (totalHeight >= maxScrollHeight) {
             clearInterval(scrollIntervalId);
             resolve();
@@ -378,7 +376,6 @@ export const ScrapMaker = async (
       });
     });
   }
-  
 
   await scrap();
 };
@@ -408,4 +405,3 @@ for (let config of getScrapingConfigV) {
     );
   }
 }
-
