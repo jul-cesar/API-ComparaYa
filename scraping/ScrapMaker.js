@@ -125,7 +125,7 @@ export const ScrapMaker = async (
     try {
       console.log(`Scraping page: ${url}`);
       const browser = await puppeteer.launch({
-        headless: false,
+     
         executablePath:
           "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
         userDataDir:
@@ -360,8 +360,8 @@ export const ScrapMaker = async (
     await page.evaluate(async () => {
       await new Promise((resolve) => {
         let totalHeight = 0;
-        const scrollInterval = 100;
-        const scrollStep = 250;
+        const scrollInterval = 200;
+        const scrollStep = 200;
 
         const scrollIntervalId = setInterval(() => {
           const maxScrollHeight = document.body.scrollHeight;
