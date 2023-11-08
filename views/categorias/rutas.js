@@ -29,7 +29,7 @@ rutasCategorias.route("/categorias").get(async (req, res) => {
 
 rutasCategorias.route("/categorias/:nombre").get(async (req, res) => {
   try {
-    const nombre = req.params.nombre
+    const nombre = req.params.nombre;
     const cats = await getOneCategoriaByName(nombre);
     if (!cats) {
       return res
