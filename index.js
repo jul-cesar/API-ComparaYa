@@ -7,6 +7,7 @@ import rutasUsuarios from "./views/usuarios/rutas.js";
 import rutasScraping from "./views/scraping_config/rutas.js";
 
 const app = Express();
+app.use(Express.json());
 app.use(Cors())
 const puerto = 4000;
 
