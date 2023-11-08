@@ -7,13 +7,13 @@ import rutasUsuarios from "./views/usuarios/rutas.js";
 import rutasScraping from "./views/scraping_config/rutas.js";
 
 export const app = Express();
-
+app.use(Cors())
 const puerto = 4000;
 
-app.use('/productos', rutasProductos); // This will apply to routes like "/productos", "/productos/:id", etc.
-app.use('/categorias', rutasCategorias); // This will apply to routes like "/categorias", "/categorias/:id", etc.
-app.use('/usuarios', rutasUsuarios); // This will apply to routes like "/usuarios", "/usuarios/:id", etc.
-app.use('/scrapingconfig', rutasScraping); //
+app.use(rutasProductos);
+app.use(rutasCategorias); 
+app.use(rutasUsuarios); 
+app.use(rutasScraping); 
 app.listen(puerto, () => {
   console.log(`Server corriendo en el puerto ${puerto}`);
 });
