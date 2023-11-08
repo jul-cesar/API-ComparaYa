@@ -381,7 +381,7 @@ export const ScrapMaker = async (
 };
 
 const getScrapingConfigV = await getScrapingConfig();
-
+console.log("xd")
 for (let config of getScrapingConfigV) {
   if (config.page_param_name > 0) {
     for (let i = 1; i <= config.page_param_name; i++) {
