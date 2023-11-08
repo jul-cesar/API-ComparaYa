@@ -65,6 +65,7 @@ rutasUsuarios.route("/usuarios/:id").delete(async (req, res) => {
 rutasUsuarios.route("/usuarios/").post(async (req, res) => {
   try {
     const { nombre, correo, contrasena } = req.body;
+    console.log(nombre, correo, contrasena)
     const result = await addUsuario(nombre, correo, contrasena);
     if (!result) {
       return res.status(404).send("No se pudo agregar el usuario");

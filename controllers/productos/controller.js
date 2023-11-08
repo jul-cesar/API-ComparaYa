@@ -20,6 +20,25 @@ export const getProductosPaginados = async (page, limit) => {
   }
 };
 
+export const getProductosPaginadosConCategoria = async (categoria, page, limit) => {
+  try {
+    const offset = (page - 1) * limit;
+    const categoria = categoria
+    const query = "SELECT * FROM productos where categoria_id = ? LIMIT ?, ?";
+    const values = [categoria, offset, limit];
+    const result = await pool.query(query, values);
+
+    if (!Array.isArray(result) || result.length < 1) {
+      throw new Error("No se encontraron productos");
+    }
+
+    return result[0];
+  } catch (error) {
+    console.error("Error al traer todos los productos", error);
+    throw error;
+  }
+};
+
 export const getProductosByCategory = async (id) => {
   try {
     const query = "SELECT * FROM productos where categoria_id = ?";
