@@ -6,7 +6,7 @@ import rutasCategorias from "./views/categorias/rutas.js";
 import rutasUsuarios from "./views/usuarios/rutas.js";
 import rutasScraping from "./views/scraping_config/rutas.js";
 
-const app = Express();
+export const app = Express();
 
 const puerto = 4000;
 
