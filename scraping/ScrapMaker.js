@@ -1,6 +1,7 @@
 import puppeteer from "puppeteer";
 import {
   addProducto,
+  deleteProducto,
   getProductos,
   updateProduct,
 } from "../controllers/productos/controller.js";
@@ -18,6 +19,23 @@ export const ScrapMaker = async (
   precioSelector,
   imgSelector
 ) => {
+
+
+// const deleteDuplicados = async () => {
+//   const onDb = await getProductos();
+//   const unique = new Map();
+//   for (const elemento of onDb) {
+//     if (!unique.has(elemento.nombre) && !unique.has(elemento.categoria_id)) {
+//       unique.set(elemento.nombre, elemento);
+//     } else {
+//      const result =  await deleteProducto(elemento.id);
+//      console.log(`producto duplicado con id: ${result[0].insertId}`);
+//     }
+//   }
+
+// };
+
+// await deleteDuplicados();
   const addToDb = async (products) => {
     for (const prod of products) {
       const {
@@ -37,7 +55,7 @@ export const ScrapMaker = async (
           precio_exito,
           categoria_id
         );
-        console.log(result[0].insertId);
+        console.log(`producto nuevo agregado con id: ${result[0].insertId}`);
       } catch (error) {
         console.error("Error adding product to database:", error);
       }
@@ -61,71 +79,57 @@ export const ScrapMaker = async (
       console.error("error al agregar categoria");
     }
   };
+  const updateProducts = async (data, prodsOnDb) => {
+    const updatedProducts = [];
+    const newProducts = [];
 
-  // const updateProducts = async (data, prodsOnDb) => {
-  //   for (const prod of data) {
-  //     const existingProd = prodsOnDb.find(
-  //       (p) =>
-  //         p.nombre.toLowerCase() === prod.nombre.toLowerCase() &&
-  //         p.categoria_id === prod.categoria_id
-  //     );
-  //     if (existingProd) {
-  //       let needsUpdate = false;
+    for (const prod of data) {
+      const existingProd = prodsOnDb.find(
+        (p) =>
+          p.nombre.toLowerCase() === prod.nombre.toLowerCase() &&
+          p.categoria_id === prod.categoria_id
+      );
 
-  //       if (prod.precio_d1 !== 0 && prod.precio_d1 !== existingProd.precio_d1) {
-  //         existingProd.precio_d1 = prod.precio_d1;
-  //         needsUpdate = true;
-  //       }
-  //       if (
-  //         prod.precio_exito !== 0 &&
-  //         prod.precio_exito !== existingProd.precio_exito
-  //       ) {
-  //         existingProd.precio_exito = prod.precio_exito;
-  //         needsUpdate = true;
-  //       }
-  //       if (
-  //         prod.precio_olim !== 0 &&
-  //         prod.precio_olim !== existingProd.precio_olim
-  //       ) {
-  //         existingProd.precio_olim = prod.precio_olim;
-  //         needsUpdate = true;
-  //       }
+      if (existingProd) {
+        let needsUpdate = false;
 
-  //       if (needsUpdate) {
-  //         const {
-  //           id,
-  //           nombre,
-  //           imagen_url,
-  //           precio_d1,
-  //           precio_olim,
-  //           precio_exito,
-  //           categoria_id,
-  //         } = existingProd;
-  //         await updateProduct(
-  //           id,
-  //           nombre,
-  //           imagen_url,
-  //           precio_d1,
-  //           precio_olim,
-  //           precio_exito,
-  //           categoria_id
-  //         );
-  //       }
-  //     }
-  //   }
-  //   return data.filter(
-  //     (prod) =>
-  //       !prodsOnDb.some(
-  //         (p) => p.nombre.toLowerCase() === prod.nombre.toLowerCase()
-  //       )
-  //   );
-  // };
+        if (
+          (prod.precio_d1 !== "N/A" &&
+            prod.precio_d1 !== existingProd.precio_d1) ||
+          (prod.precio_exito !== "N/A" &&
+            prod.precio_exito !== existingProd.precio_exito) ||
+          (prod.precio_olim !== "N/A" &&
+            prod.precio_olim !== existingProd.precio_olim) ||
+          (prod.imagen_url !== "N/A" &&
+            prod.imagen_url !== existingProd.imagen_url)
+        ) {
+          needsUpdate = true;
+        }
+
+        if (needsUpdate) {
+          await updateProduct(
+            existingProd.id,
+            prod.nombre,
+            prod.imagen_url,
+            prod.precio_d1,
+            prod.precio_olim,
+            prod.precio_exito,
+            prod.categoria_id
+          );
+          updatedProducts.push(prod);
+          console.log(`Productos updated: ${updatedProducts.length}`);
+        }
+      } else {
+        newProducts.push(prod);
+      }
+    }
+    return newProducts;
+  };
 
   const scrap = async () => {
     try {
       console.log(`Scraping page: ${url}`);
       const browser = await puppeteer.launch({
-     
         executablePath:
           "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
         userDataDir:
@@ -346,8 +350,8 @@ export const ScrapMaker = async (
       );
 
       const prodsOnDb = await getProductos();
-      // const updatedData = await updateProducts(productData, prodsOnDb);
-      await addToDb(productData);
+      const updatedData = await updateProducts(productData, prodsOnDb);
+      await addToDb(updatedData);
 
       console.log(productData);
       await browser.close();
@@ -360,8 +364,8 @@ export const ScrapMaker = async (
     await page.evaluate(async () => {
       await new Promise((resolve) => {
         let totalHeight = 0;
-        const scrollInterval = 100;
-        const scrollStep = 100;
+        const scrollInterval = 500;
+        const scrollStep = 400;
 
         const scrollIntervalId = setInterval(() => {
           const maxScrollHeight = document.body.scrollHeight;
@@ -381,7 +385,6 @@ export const ScrapMaker = async (
 };
 
 const getScrapingConfigV = await getScrapingConfig();
-console.log("xd")
 for (let config of getScrapingConfigV) {
   if (config.page_param_name > 0) {
     for (let i = 1; i <= config.page_param_name; i++) {
