@@ -34,8 +34,14 @@ export const getUsuarioNombre = async (email) => {
 };
 
 
-
-
+export const getIdUser = async (email) => {
+  try {
+    const result = await pool.query("SELECT id FROM usuarios WHERE correo = ?", email);
+    return result[0][0];
+  } catch (error) {
+    console.error("Error al traer el id de un usuario", error);
+  }
+};
 export const deleteUsuario = async (id) => {
   try {
     const result = await pool.query("DELETE FROM usuarios WHERE id = ?", id);

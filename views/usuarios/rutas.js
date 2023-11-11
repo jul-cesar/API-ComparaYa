@@ -7,6 +7,7 @@ import {
   addUsuario,
   updateUsuario,
   getUsuarioNombre,
+  getIdUser,
 } from "../../controllers/usuarios/controller.js";
 
 const rutasUsuarios = Express.Router();
@@ -104,6 +105,22 @@ rutasUsuarios.route("/usuarionombre/:email").get(async (req, res) => {
 
     if (!result) {
       return res.status(404).json({ error: "Nombre de usuario no encontrado" });
+    }
+    res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+
+rutasUsuarios.route("/usuarioid/:email").get(async (req, res) => {
+  try {
+    const email = req.params.email;
+
+    const result = await getIdUser(email);
+
+    if (!result) {
+      return res.status(404).json({ error: "id no encontrado" });
     }
     res.status(200).json(result);
   } catch (error) {
