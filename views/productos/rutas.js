@@ -16,7 +16,7 @@ import {
 const rutasProductos = Express.Router();
 //Rutas
 
-RutasProductos.route("/productos").get(async (req, res) => {
+rutasProductos.route("/productos").get(async (req, res) => {
   try {
     const prods = await getProductos();
     if (!prods) {
