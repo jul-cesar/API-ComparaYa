@@ -20,11 +20,47 @@ export const getProductosPaginados = async (page, limit) => {
   }
 };
 
-export const getProductosFiltrados = async (precioMaximo,distri, categoriaid) => {
+export const getProductosFiltradosExito = async (precioMaximo, categoriaid) => {
   try {
     const query =
-      "SELECT * FROM productos WHERE ? < ? and ? > 0 and categoria_id = ?";
-    const values = [precioMaximo,distri, categoriaid];
+      "SELECT * FROM productos WHERE precio_exito < ? and precio_exito > 0 and categoria_id = ?";
+    const values = [precioMaximo, categoriaid];
+    const result = await pool.query(query, values);
+
+    if (!Array.isArray(result) || result.length < 1) {
+      throw new Error("No se encontraron productos");
+    }
+
+    return result[0];
+  } catch (error) {
+    console.error("Error al traer todos los productos", error);
+    throw error;
+  }
+};
+
+export const getProductosFiltradosD1 = async (precioMaximo, categoriaid) => {
+  try {
+    const query =
+      "SELECT * FROM productos WHERE precio_d1< ? and precio_d1 > 0 and categoria_id = ?";
+    const values = [precioMaximo, categoriaid];
+    const result = await pool.query(query, values);
+
+    if (!Array.isArray(result) || result.length < 1) {
+      throw new Error("No se encontraron productos");
+    }
+
+    return result[0];
+  } catch (error) {
+    console.error("Error al traer todos los productos", error);
+    throw error;
+  }
+};
+
+export const getProductosFiltradosOlim = async (precioMaximo, categoriaid) => {
+  try {
+    const query =
+      "SELECT * FROM productos WHERE precio_olim < ? and precio_olim > 0 and categoria_id = ?";
+    const values = [precioMaximo, categoriaid];
     const result = await pool.query(query, values);
 
     if (!Array.isArray(result) || result.length < 1) {
