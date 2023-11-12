@@ -20,13 +20,11 @@ import {
 const rutasProductos = Express.Router();
 //Rutas
 
-rutasProductos.route("/productos").get(async (req, res) => {
+utasProductos.route("/productos").get(async (req, res) => {
   try {
     const prods = await getProductos();
     if (!prods) {
-      return res
-        .status(404)
-        .send("No se encontraron productos o prende el xamp xd");
+      return res.status(404).send("No se encontraron productos");
     }
     res.status(200).send(prods);
   } catch (error) {
@@ -35,99 +33,38 @@ rutasProductos.route("/productos").get(async (req, res) => {
   }
 });
 
+// Ruta para obtener productos por categoría
 rutasProductos.route("/productos/categoria/:id").get(async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     const prods = await getProductosByCategory(id);
-
     if (!prods) {
-      return res
-        .status(404)
-        .send("No se encontraron productos o prende el xamp xd");
+      return res.status(404).send("No se encontraron productos en la categoría especificada");
     }
     res.status(200).send(prods);
   } catch (error) {
-    console.error("Error al obtener los productos", error);
+    console.error("Error al obtener los productos por categoría", error);
     res.status(500).send("Ocurrió un error al obtener los productos");
   }
 });
 
-rutasProductos.route("/productosfiltroexito/:preciomax/:idcat").get(async (req, res) => {
+// Ruta unificada para productos filtrados
+rutasProductos.route("/productos/filtrados").get(async (req, res) => {
   try {
-    const id = parseInt(req.params.idcat, 10);
-    const precioMaximo = req.params.preciomax
+    const { preciomax, idcat, distribuidor } = req.query;
+    const id = parseInt(idcat, 10);
+    const precioMaximo = preciomax;
 
-    const prods = await getProductosFiltradosExito(precioMaximo, id);
-
+    const prods = await getProductosFiltrados(precioMaximo, id, distribuidor);
     if (!prods) {
-      return res
-        .status(404)
-        .send("No se encontraron productos o prende el xamp xd");
+      return res.status(404).send("No se encontraron productos con los filtros aplicados");
     }
     res.status(200).send(prods);
   } catch (error) {
-    console.error("Error al obtener los productos", error);
+    console.error("Error al obtener los productos filtrados", error);
     res.status(500).send("Ocurrió un error al obtener los productos");
   }
 });
-
-rutasProductos.route("/productosfiltrod1/:preciomax/:idcat").get(async (req, res) => {
-  try {
-    const id = parseInt(req.params.idcat, 10);
-    const precioMaximo = req.params.preciomax
-
-    const prods = await getProductosFiltradosD1(precioMaximo, id);
-
-    if (!prods) {
-      return res
-        .status(404)
-        .send("No se encontraron productos o prende el xamp xd");
-    }
-    res.status(200).send(prods);
-  } catch (error) {
-    console.error("Error al obtener los productos", error);
-    res.status(500).send("Ocurrió un error al obtener los productos");
-  }
-});
-
-rutasProductos.route("/productosfiltroolim/:preciomax/:idcat").get(async (req, res) => {
-  try {
-    const id = parseInt(req.params.idcat, 10);
-    const precioMaximo = req.params.preciomax
-
-    const prods = await getProductosFiltradosOlim(precioMaximo, id);
-
-    if (!prods) {
-      return res
-        .status(404)
-        .send("No se encontraron productos o prende el xamp xd");
-    }
-    res.status(200).send(prods);
-  } catch (error) {
-    console.error("Error al obtener los productos", error);
-    res.status(500).send("Ocurrió un error al obtener los productos");
-  }
-});
-
-rutasProductos.route("/productosfiltro/:preciomax/:idcat").get(async (req, res) => {
-  try {
-    const id = parseInt(req.params.idcat, 10);
-    const precioMaximo = req.params.preciomax
-
-    const prods = await getProductosFiltrados(precioMaximo, id);
-
-    if (!prods) {
-      return res
-        .status(404)
-        .send("No se encontraron productos o prende el xamp xd");
-    }
-    res.status(200).send(prods);
-  } catch (error) {
-    console.error("Error al obtener los productos", error);
-    res.status(500).send("Ocurrió un error al obtener los productos");
-  }
-});
-
 
 rutasProductos.route("/productos/:categoriaid/:page/:limit").get(async (req, res) => {
   try {
