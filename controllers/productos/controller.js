@@ -23,7 +23,7 @@ export const getProductosPaginados = async (page, limit) => {
 export const getProductosFiltrados = async (precioMaximo,distri, categoriaid) => {
   try {
     const query =
-      "SELECT * FROM productos WHERE precio_? < ? and precio_? > 0 and categoria_id = ?";
+      "SELECT * FROM productos WHERE ? < ? and ? > 0 and categoria_id = ?";
     const values = [precioMaximo,distri, categoriaid];
     const result = await pool.query(query, values);
 
