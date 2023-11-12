@@ -11,7 +11,6 @@ import {
   getProductosPaginados,
   getProductosByCategory,
   getProductosPaginadosConCategoria,
-  getProductosFiltrados,
   getProductosFiltradosExito,
   getProductosFiltradosD1,
   getProductosFiltradosOlim,
