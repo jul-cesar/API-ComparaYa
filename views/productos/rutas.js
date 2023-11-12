@@ -53,7 +53,7 @@ rutasProductos.route("/productos/:categoriaid/:page/:limit").get(async (req, res
     const categoria_id = req.params.categoriaid
     const page = parseInt(req.params.page, 10);
     const limit = parseInt(req.params.limit, 10);
-    const prods = await getProductosPaginadosConCategorias(categoria_id,page, limit);
+    const prods = await getProductosPaginadosConCategoria(categoria_id,page, limit);
 
     if (!prods) {
       return res

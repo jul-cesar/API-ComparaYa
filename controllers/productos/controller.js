@@ -23,9 +23,9 @@ export const getProductosPaginados = async (page, limit) => {
 export const getProductosPaginadosConCategoria = async (categoria, page, limit) => {
   try {
     const offset = (page - 1) * limit;
-    const categoria = categoria
+    const categoriaid = categoria
     const query = "SELECT * FROM productos where categoria_id = ? LIMIT ?, ?";
-    const values = [categoria, offset, limit];
+    const values = [categoriaid, offset, limit];
     const result = await pool.query(query, values);
 
     if (!Array.isArray(result) || result.length < 1) {
