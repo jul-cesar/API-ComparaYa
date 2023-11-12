@@ -20,12 +20,11 @@ export const getProductosPaginados = async (page, limit) => {
   }
 };
 
-export const getProductosFiltrados= async (precioMaximo, categoriaid) => {
+export const getProductosFiltrados = async (precioMaximo,distri, categoriaid) => {
   try {
-    
-
-    const query = "SELECT * FROM productos WHERE precio_exito < ? and precio_exito > 0 and categoria_id = ?";
-    const values = [precioMaximo, categoriaid];
+    const query =
+      "SELECT * FROM productos WHERE precio_? < ? and precio_? > 0 and categoria_id = ?";
+    const values = [precioMaximo,distri, categoriaid];
     const result = await pool.query(query, values);
 
     if (!Array.isArray(result) || result.length < 1) {
@@ -39,10 +38,14 @@ export const getProductosFiltrados= async (precioMaximo, categoriaid) => {
   }
 };
 
-export const getProductosPaginadosConCategoria = async (categoria, page, limit) => {
+export const getProductosPaginadosConCategoria = async (
+  categoria,
+  page,
+  limit
+) => {
   try {
     const offset = (page - 1) * limit;
-    const categoriaid = categoria
+    const categoriaid = categoria;
     const query = "SELECT * FROM productos where categoria_id = ? LIMIT ?, ?";
     const values = [categoriaid, offset, limit];
     const result = await pool.query(query, values);

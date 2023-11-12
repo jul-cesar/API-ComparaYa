@@ -49,11 +49,12 @@ rutasProductos.route("/productos/categoria/:id").get(async (req, res) => {
   }
 });
 
-rutasProductos.route("/productosfiltro/:preciomax/:idcat").get(async (req, res) => {
+rutasProductos.route("/productosfiltro/:preciomax/:distri/:idcat").get(async (req, res) => {
   try {
     const id = parseInt(req.params.idcat, 10);
     const precioMaximo = req.params.preciomax
-    const prods = await getProductosFiltrados(precioMaximo, id);
+    const distri = req.params.distri
+    const prods = await getProductosFiltrados(precioMaximo,distri, id);
 
     if (!prods) {
       return res
