@@ -7,9 +7,13 @@ import {
   deleteProducto,
   addProducto,
   updateProduct,
+  SumPrice,
   getProductosPaginados,
   getProductosByCategory,
   getProductosPaginadosConCategoria,
+  getProductosFiltradosExito,
+  getProductosFiltradosD1,
+  getProductosFiltradosOlim,
   getProductosFiltrados,
 } from "../../controllers/productos/controller.js";
 
@@ -20,7 +24,9 @@ rutasProductos.route("/productos").get(async (req, res) => {
   try {
     const prods = await getProductos();
     if (!prods) {
-      return res.status(404).send("No se encontraron productos");
+      return res
+        .status(404)
+        .send("No se encontraron productos o prende el xamp xd");
     }
     res.status(200).send(prods);
   } catch (error) {
@@ -29,67 +35,119 @@ rutasProductos.route("/productos").get(async (req, res) => {
   }
 });
 
-// Ruta para obtener productos por categoría
 rutasProductos.route("/productos/categoria/:id").get(async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     const prods = await getProductosByCategory(id);
+
     if (!prods) {
       return res
         .status(404)
-        .send("No se encontraron productos en la categoría especificada");
+        .send("No se encontraron productos o prende el xamp xd");
     }
     res.status(200).send(prods);
   } catch (error) {
-    console.error("Error al obtener los productos por categoría", error);
+    console.error("Error al obtener los productos", error);
     res.status(500).send("Ocurrió un error al obtener los productos");
   }
 });
 
-// Ruta unificada para productos filtrados
-rutasProductos.route("/productos/filtrados").get(async (req, res) => {
+rutasProductos.route("/productosfiltroexito/:preciomax/:idcat").get(async (req, res) => {
   try {
-    const { preciomax, idcat, distribuidor } = req.query;
-    const id = parseInt(idcat, 10);
-    const precioMaximo = preciomax;
+    const id = parseInt(req.params.idcat, 10);
+    const precioMaximo = req.params.preciomax
 
-    const prods = await getProductosFiltrados(precioMaximo, id, distribuidor);
+    const prods = await getProductosFiltradosExito(precioMaximo, id);
+
     if (!prods) {
       return res
         .status(404)
-        .send("No se encontraron productos con los filtros aplicados");
+        .send("No se encontraron productos o prende el xamp xd");
     }
     res.status(200).send(prods);
   } catch (error) {
-    console.error("Error al obtener los productos filtrados", error);
+    console.error("Error al obtener los productos", error);
     res.status(500).send("Ocurrió un error al obtener los productos");
   }
 });
 
-rutasProductos
-  .route("/productos/:categoriaid/:page/:limit")
-  .get(async (req, res) => {
-    try {
-      const categoria_id = req.params.categoriaid;
-      const page = parseInt(req.params.page, 10);
-      const limit = parseInt(req.params.limit, 10);
-      const prods = await getProductosPaginadosConCategoria(
-        categoria_id,
-        page,
-        limit
-      );
+rutasProductos.route("/productosfiltrod1/:preciomax/:idcat").get(async (req, res) => {
+  try {
+    const id = parseInt(req.params.idcat, 10);
+    const precioMaximo = req.params.preciomax
 
-      if (!prods) {
-        return res
-          .status(404)
-          .send("No se encontraron productos o prende el xamp xd");
-      }
-      res.status(200).send(prods);
-    } catch (error) {
-      console.error("Error al obtener los productos", error);
-      res.status(500).send("Ocurrió un error al obtener los productos");
+    const prods = await getProductosFiltradosD1(precioMaximo, id);
+
+    if (!prods) {
+      return res
+        .status(404)
+        .send("No se encontraron productos o prende el xamp xd");
     }
-  });
+    res.status(200).send(prods);
+  } catch (error) {
+    console.error("Error al obtener los productos", error);
+    res.status(500).send("Ocurrió un error al obtener los productos");
+  }
+});
+
+rutasProductos.route("/productosfiltroolim/:preciomax/:idcat").get(async (req, res) => {
+  try {
+    const id = parseInt(req.params.idcat, 10);
+    const precioMaximo = req.params.preciomax
+
+    const prods = await getProductosFiltradosOlim(precioMaximo, id);
+
+    if (!prods) {
+      return res
+        .status(404)
+        .send("No se encontraron productos o prende el xamp xd");
+    }
+    res.status(200).send(prods);
+  } catch (error) {
+    console.error("Error al obtener los productos", error);
+    res.status(500).send("Ocurrió un error al obtener los productos");
+  }
+});
+
+rutasProductos.route("/productosfiltro/:preciomax/:idcat").get(async (req, res) => {
+  try {
+    const id = parseInt(req.params.idcat, 10);
+    const precioMaximo = req.params.preciomax
+
+    const prods = await getProductosFiltrados(precioMaximo, id);
+
+    if (!prods) {
+      return res
+        .status(404)
+        .send("No se encontraron productos o prende el xamp xd");
+    }
+    res.status(200).send(prods);
+  } catch (error) {
+    console.error("Error al obtener los productos", error);
+    res.status(500).send("Ocurrió un error al obtener los productos");
+  }
+});
+
+
+rutasProductos.route("/productos/:categoriaid/:page/:limit").get(async (req, res) => {
+  try {
+    const categoria_id = req.params.categoriaid
+    const page = parseInt(req.params.page, 10);
+    const limit = parseInt(req.params.limit, 10);
+    const prods = await getProductosPaginadosConCategoria(categoria_id,page, limit);
+
+    if (!prods) {
+      return res
+        .status(404)
+        .send("No se encontraron productos o prende el xamp xd");
+    }
+    res.status(200).send(prods);
+  } catch (error) {
+    console.error("Error al obtener los productos", error);
+    res.status(500).send("Ocurrió un error al obtener los productos");
+  }
+});
+
 
 rutasProductos.route("/productos/:page/:limit").get(async (req, res) => {
   try {
