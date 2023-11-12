@@ -19,23 +19,21 @@ export const ScrapMaker = async (
   precioSelector,
   imgSelector
 ) => {
+  // const deleteDuplicados = async () => {
+  //   const onDb = await getProductos();
+  //   const unique = new Map();
+  //   for (const elemento of onDb) {
+  //     if (!unique.has(elemento.nombre) && !unique.has(elemento.categoria_id)) {
+  //       unique.set(elemento.nombre, elemento);
+  //     } else {
+  //      const result =  await deleteProducto(elemento.id);
+  //      console.log(`producto duplicado con id: ${result[0].insertId}`);
+  //     }
+  //   }
 
+  // };
 
-// const deleteDuplicados = async () => {
-//   const onDb = await getProductos();
-//   const unique = new Map();
-//   for (const elemento of onDb) {
-//     if (!unique.has(elemento.nombre) && !unique.has(elemento.categoria_id)) {
-//       unique.set(elemento.nombre, elemento);
-//     } else {
-//      const result =  await deleteProducto(elemento.id);
-//      console.log(`producto duplicado con id: ${result[0].insertId}`);
-//     }
-//   }
-
-// };
-
-// await deleteDuplicados();
+  // await deleteDuplicados();
   const addToDb = async (products) => {
     for (const prod of products) {
       const {
@@ -302,6 +300,14 @@ export const ScrapMaker = async (
           imgSelector,
           precioSelector
         ) => {
+          const formatPrice = (priceText) => {
+            const numericPrice = parseInt(
+              priceText.replace("$", "").replace(/\./g, ""),
+              10
+            );
+            return numericPrice;
+          };
+
           const productsCards = document.querySelectorAll(cardSelector);
           return Array.from(productsCards).map((prod) => {
             const shadowRoot = prod.shadowRoot || prod;
@@ -320,27 +326,21 @@ export const ScrapMaker = async (
 
             if (distribuidora === "olimpica") {
               baseProduct.precio_olim = precioEl
-                ? precioEl.innerText.includes("$")
-                  ? precioEl.innerText.replace("$", "")
-                  : precioEl.innerText
+                ? formatPrice(precioEl.innerText)
                 : "N/A";
             } else if (distribuidora === "d1") {
               baseProduct.precio_d1 = precioEl
-                ? precioEl.innerText.includes("$")
-                  ? precioEl.innerText.replace("$", "")
-                  : precioEl.innerText
+                ? formatPrice(precioEl.innerText)
                 : "N/A";
             } else {
               baseProduct.precio_exito = precioEl
-                ? precioEl.innerText.includes("$")
-                  ? precioEl.innerText.replace("$", "")
-                  : precioEl.innerText
+                ? formatPrice(precioEl.innerText)
                 : "N/A";
             }
-
             return baseProduct;
           });
         },
+
         categoryIdValue,
         distribuidora,
         cardSelector,
