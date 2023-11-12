@@ -14,6 +14,7 @@ import {
   getProductosFiltradosExito,
   getProductosFiltradosD1,
   getProductosFiltradosOlim,
+  getProductosFiltrados,
 } from "../../controllers/productos/controller.js";
 
 const rutasProductos = Express.Router();
@@ -108,6 +109,24 @@ rutasProductos.route("/productosfiltroolim/:preciomax/:idcat").get(async (req, r
   }
 });
 
+rutasProductos.route("/productosfiltro/:preciomax/:idcat").get(async (req, res) => {
+  try {
+    const id = parseInt(req.params.idcat, 10);
+    const precioMaximo = req.params.preciomax
+
+    const prods = await getProductosFiltrados(precioMaximo, id);
+
+    if (!prods) {
+      return res
+        .status(404)
+        .send("No se encontraron productos o prende el xamp xd");
+    }
+    res.status(200).send(prods);
+  } catch (error) {
+    console.error("Error al obtener los productos", error);
+    res.status(500).send("Ocurrió un error al obtener los productos");
+  }
+});
 
 
 rutasProductos.route("/productos/:categoriaid/:page/:limit").get(async (req, res) => {
