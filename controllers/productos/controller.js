@@ -20,39 +20,11 @@ export const getProductosPaginados = async (page, limit) => {
   }
 };
 
-export const getProductosFiltrados = async (
-  precioMaximo,
-  categoriaid,
-  distribuidor
-) => {
+export const getProductosFiltradosExito = async (precioMaximo, categoriaid) => {
   try {
-    let query;
+    const query =
+      "SELECT * FROM productos WHERE precio_exito < ? and precio_exito > 0 and categoria_id = ?";
     const values = [precioMaximo, categoriaid];
-
-    switch (distribuidor) {
-      case "EXITO":
-        query =
-          "SELECT * FROM productos WHERE precio_exito < ? and precio_exito > 0 and categoria_id = ?";
-        break;
-      case "D1":
-        query =
-          "SELECT * FROM productos WHERE precio_d1 < ? and precio_d1 > 0 and categoria_id = ?";
-        break;
-      case "OLIMPICA":
-        query =
-          "SELECT * FROM productos WHERE precio_olim < ? and precio_olim > 0 and categoria_id = ?";
-        break;
-      default:
-        query = `
-          SELECT * FROM productos 
-          WHERE 
-            (precio_exito > 0 AND precio_exito < ?) OR 
-            (precio_olim > 0 AND precio_olim < ?) OR 
-            (precio_d1 > 0 AND precio_d1 < ?)
-          AND categoria_id = ?`;
-        values.push(precioMaximo, precioMaximo); // Agregar dos veces más para los otros distribuidores
-    }
-
     const result = await pool.query(query, values);
 
     if (!Array.isArray(result) || result.length < 1) {
@@ -61,10 +33,73 @@ export const getProductosFiltrados = async (
 
     return result[0];
   } catch (error) {
-    console.error("Error al obtener productos filtrados", error);
+    console.error("Error al traer todos los productos", error);
     throw error;
   }
 };
+
+export const getProductosFiltradosD1 = async (precioMaximo, categoriaid) => {
+  try {
+    const query =
+      "SELECT * FROM productos WHERE precio_d1 < ? and precio_d1 > 0 and categoria_id = ?";
+    const values = [precioMaximo, categoriaid];
+    const result = await pool.query(query, values);
+
+    if (!Array.isArray(result) || result.length < 1) {
+      throw new Error("No se encontraron productos");
+    }
+
+    return result[0];
+  } catch (error) {
+    console.error("Error al traer todos los productos", error);
+    throw error;
+  }
+};
+
+export const getProductosFiltradosOlim = async (precioMaximo, categoriaid) => {
+  try {
+    const query =
+      "SELECT * FROM productos WHERE precio_olim < ? and precio_olim > 0 and categoria_id = ?";
+    const values = [precioMaximo, categoriaid];
+    const result = await pool.query(query, values);
+
+    if (!Array.isArray(result) || result.length < 1) {
+      throw new Error("No se encontraron productos");
+    }
+
+    return result[0];
+  } catch (error) {
+    console.error("Error al traer todos los productos", error);
+    throw error;
+  }
+};
+
+
+
+export const getProductosFiltrados = async (precioMaximo, categoriaid) => {
+  try {
+    const query = `
+      SELECT * FROM productos 
+      WHERE 
+        (precio_exito > 0 AND precio_exito < ?) OR 
+        (precio_olim > 0 AND precio_olim < ?) OR 
+        (precio_d1 > 0 AND precio_d1 < ?)
+      AND categoria_id = ?`;
+    const values = [precioMaximo, precioMaximo, precioMaximo, categoriaid];
+    const result = await pool.query(query, values);
+
+    if (!Array.isArray(result) || result.length < 1) {
+      throw new Error("No se encontraron productos");
+    }
+
+    return result[0];
+  } catch (error) {
+    console.error("Error al traer todos los productos", error);
+    throw error;
+  }
+};
+
+
 
 export const getProductosPaginadosConCategoria = async (
   categoria,
