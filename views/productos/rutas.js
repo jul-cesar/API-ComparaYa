@@ -49,12 +49,12 @@ rutasProductos.route("/productos/categoria/:id").get(async (req, res) => {
 // Ruta unificada para productos filtrados
 rutasProductos.route("/productos/filtrados/:preciomax/:catid/:distri").get(async (req, res) => {
   try {
-    const { preciomax,catid, distribuidor } = req.params
+    const { preciomax,catid, distri } = req.params
     const id = parseInt(catid, 10);
     const precioMaximo = preciomax;
   
 
-    const prods = await getProductosFiltrados(precioMaximo, id, distribuidor);
+    const prods = await getProductosFiltrados(precioMaximo, id, distri);
     if (!prods) {
       return res
         .status(404)
