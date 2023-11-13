@@ -30,7 +30,7 @@ export const getProductosFiltrados = async (
     let values = [precioMaximo, categoriaid];
     console.log({ precioMaximo, categoriaid, distribuidor });
 
-    if (categoriaid) {
+    if (categoriaid && distribuidor) {
       // Si hay un 'categoriaid' definido
       values = [precioMaximo, categoriaid];
 
@@ -55,23 +55,24 @@ export const getProductosFiltrados = async (
                    (precio_d1 > 0 AND precio_d1 < ?)) AND categoria_id = ?;`;
           values = [precioMaximo, precioMaximo, precioMaximo, categoriaid];
           break;
+
       }
     } else {
-
+      // Si 'categoriaid' no está definido
       values = [precioMaximo];
 
       switch (distribuidor) {
         case "EXITO":
           query =
-            "SELECT * FROM productos WHERE precio_exito < ? AND precio_exito > 0";
+            "SELECT * FROM productos WHERE precio_exito > 0";
           break;
         case "D1":
           query =
-            "SELECT * FROM productos WHERE precio_d1 < ? AND precio_d1 > 0";
+            "SELECT * FROM productos WHERE precio_d1 > 0 ";
           break;
         case "OLIMPICA":
           query =
-            "SELECT * FROM productos WHERE precio_olim < ? AND precio_olim > 0";
+            "SELECT * FROM productos WHERE precio_olim > 0 ";
           break;
         case "todos":
           query = `
@@ -81,7 +82,10 @@ export const getProductosFiltrados = async (
                   (precio_d1 > 0 AND precio_d1 < ?);`;
           values = [precioMaximo, precioMaximo, precioMaximo];
           break;
-        
+        // Agrega aquí otros casos si los hay
+        default:
+          // Manejo de casos no definidos si es necesario
+          break;
       }
     }
     console.log({ query, values });
