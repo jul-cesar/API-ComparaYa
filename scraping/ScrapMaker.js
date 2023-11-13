@@ -364,8 +364,8 @@ export const ScrapMaker = async (
     await page.evaluate(async () => {
       await new Promise((resolve) => {
         let totalHeight = 0;
-        const scrollInterval = 500;
-        const scrollStep = 350;
+        const scrollInterval = 600;
+        const scrollStep = 400;
 
         const scrollIntervalId = setInterval(() => {
           const maxScrollHeight = document.body.scrollHeight;
