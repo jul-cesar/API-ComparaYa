@@ -87,7 +87,7 @@ export const getProductosPorDistribuidorYCategoria = async (
   distribuidor,
   categoriaid
 ) => {
-  if (distribuidor === "olimpica") {
+  if (distribuidor === "olimpica" ) {
     distribuidor = "olim";
   }
   const query = `SELECT * FROM productos WHERE precio_${distribuidor.toLowerCase()} > 0 AND categoria_id = ?`;
