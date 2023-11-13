@@ -17,6 +17,7 @@ import {
   getProductosPMQYDistribuidor,
   getProductosPMQDistribuidorYCategoria,
 } from "../../controllers/productos/controller.js";
+import { getRolUser } from "../../controllers/roles/controller.js";
 
 const rutasProductos = Express.Router();
 //Rutas
@@ -224,6 +225,8 @@ rutasProductos.route("/productos/:id").get(async (req, res) => {
   }
 });
 
+
+
 rutasProductos.route("/productos/:id").delete(async (req, res) => {
   try {
     const id = req.params.id;
@@ -295,6 +298,25 @@ rutasProductos.route("/productos/:id").put(async (req, res) => {
       .json({ error: "Ocurrió un error al actualizar el producto" });
   } catch (error) {
     console.error(error);
+  }
+});
+
+
+rutasProductos.route("/roles/:id").get(async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    if (!id) {
+      throw error("Id no proporcionado");
+    }
+
+    const result = await getRolUser(id);
+    if (!result) {
+      return res.status(400).send("Producto no encontrado");
+    }
+    res.send(result);
+  } catch (error) {
+    console.error("Error al encontrar un producto con id dado");
   }
 });
 
