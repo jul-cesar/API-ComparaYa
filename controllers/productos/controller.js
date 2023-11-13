@@ -43,7 +43,7 @@ export const getProductosFiltrados = async (
         query =
           "SELECT * FROM productos WHERE precio_olim < ? and precio_olim > 0 and categoria_id = ?";
         break;
-      default:
+        case "todos":
         query = `
         SELECT * FROM productos 
         WHERE ((precio_exito > 0 AND precio_exito < ?) OR (precio_olim > 0 AND precio_olim < ?) OR (precio_d1 > 0 AND precio_d1 < ?) )AND categoria_id = ?;`;
