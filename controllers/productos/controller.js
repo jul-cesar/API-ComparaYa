@@ -39,49 +39,62 @@ export const getProductosPMQ = async (precioMaximo) => {
 };
 
 export const getProductosPorDistribuidor = async (distribuidor) => {
-  if(distribuidor === "olimpica"){
-    distribuidor = "olim"
+  if (distribuidor === "olimpica") {
+    distribuidor = "olim";
   }
   const query = `SELECT * FROM productos WHERE precio_${distribuidor.toLowerCase()} > 0`;
-  return await pool.query(query);
+  const result = await pool.query(query);
+  result[0];
 };
 
-export const getProductosPMQYDistribuidor = async (precioMaximo, distribuidor) => {
-  if(distribuidor === "olimpica"){
-    distribuidor = "olim"
+export const getProductosPMQYDistribuidor = async (
+  precioMaximo,
+  distribuidor
+) => {
+  if (distribuidor === "olimpica") {
+    distribuidor = "olim";
   }
   const query = `SELECT * FROM productos WHERE precio_${distribuidor.toLowerCase()} < ? and  precio_${distribuidor.toLowerCase()} > 0 `;
   const values = [precioMaximo];
-  return await pool.query(query, values);
+  const result = await pool.query(query, values);
+  result[0];
 };
 
-export const getProductosPMQDistribuidorYCategoria = async (precioMaximo, distribuidor, categoriaid) => {
+export const getProductosPMQDistribuidorYCategoria = async (
+  precioMaximo,
+  distribuidor,
+  categoriaid
+) => {
   const query = `SELECT * FROM productos WHERE precio_${distribuidor.toLowerCase()} < ? AND categoria_id = ?`;
   const values = [precioMaximo, categoriaid];
-  return await pool.query(query, values);
+  const result = await pool.query(query, values)
+  result[0];
 };
 
-export const getProductosPorPrecioMaximoYCategoria = async (precioMaximo, categoriaid) => {
-  const query = "SELECT * FROM productos WHERE (precio_exito <  ? and precio_exito > 0 OR precio_olim < ? and precio_olim> 0 OR precio_d1 < ? and precio_d1 > 0) AND categoria_id = ?";
+export const getProductosPorPrecioMaximoYCategoria = async (
+  precioMaximo,
+  categoriaid
+) => {
+  const query =
+    "SELECT * FROM productos WHERE (precio_exito <  ? and precio_exito > 0 OR precio_olim < ? and precio_olim> 0 OR precio_d1 < ? and precio_d1 > 0) AND categoria_id = ?";
   const values = [precioMaximo, precioMaximo, precioMaximo, categoriaid];
-  return await pool.query(query, values);
+  const result = await pool.query(query, values)
+  result[0];
 };
 
-export const getProductosPorDistribuidorYCategoria = async (distribuidor, categoriaid) => {
-  if(distribuidor === "olimpica"){
-    distribuidor = "olim"
+export const getProductosPorDistribuidorYCategoria = async (
+  distribuidor,
+  categoriaid
+) => {
+  if (distribuidor === "olimpica") {
+    distribuidor = "olim";
   }
   const query = `SELECT * FROM productos WHERE precio_${distribuidor.toLowerCase()} > 0 AND categoria_id = ?`;
   const values = [categoriaid];
-  return await pool.query(query, values);
+  const result = await pool.query(query, values)
+  result[0];
 };
 
-
-
-
-
-
-  
 export const getProductosPaginadosConCategoria = async (
   categoria,
   page,
