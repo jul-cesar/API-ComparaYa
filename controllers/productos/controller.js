@@ -30,24 +30,59 @@ export const getProductosFiltrados = async (
     let values = [precioMaximo, categoriaid];
     console.log({ precioMaximo, categoriaid, distribuidor });
 
-    switch (distribuidor) {
-      case "EXITO":
-        query =
-          "SELECT * FROM productos WHERE precio_exito < ? and precio_exito > 0 and categoria_id = ?";
-        break;
-      case "D1":
-        query =
-          "SELECT * FROM productos WHERE precio_d1 < ? and precio_d1 > 0 and categoria_id = ?";
-        break;
-      case "OLIMPICA":
-        query =
-          "SELECT * FROM productos WHERE precio_olim < ? and precio_olim > 0 and categoria_id = ?";
-        break;
+    if (categoriaid) {
+      // Si hay un 'categoriaid' definido
+      values = [precioMaximo, categoriaid];
+
+      switch (distribuidor) {
+        case "EXITO":
+          query =
+            "SELECT * FROM productos WHERE precio_exito < ? AND precio_exito > 0 AND categoria_id = ?";
+          break;
+        case "D1":
+          query =
+            "SELECT * FROM productos WHERE precio_d1 < ? AND precio_d1 > 0 AND categoria_id = ?";
+          break;
+        case "OLIMPICA":
+          query =
+            "SELECT * FROM productos WHERE precio_olim < ? AND precio_olim > 0 AND categoria_id = ?";
+          break;
         case "todos":
-        query = `
-        SELECT * FROM productos 
-        WHERE ((precio_exito > 0 AND precio_exito < ?) OR (precio_olim > 0 AND precio_olim < ?) OR (precio_d1 > 0 AND precio_d1 < ?)) AND categoria_id = ?`;
-        values = [precioMaximo, precioMaximo, precioMaximo, categoriaid];
+          query = `
+            SELECT * FROM productos 
+            WHERE ((precio_exito > 0 AND precio_exito < ?) OR 
+                   (precio_olim > 0 AND precio_olim < ?) OR 
+                   (precio_d1 > 0 AND precio_d1 < ?)) AND categoria_id = ?;`;
+          values = [precioMaximo, precioMaximo, precioMaximo, categoriaid];
+          break;
+      }
+    } else {
+
+      values = [precioMaximo];
+
+      switch (distribuidor) {
+        case "EXITO":
+          query =
+            "SELECT * FROM productos WHERE precio_exito < ? AND precio_exito > 0";
+          break;
+        case "D1":
+          query =
+            "SELECT * FROM productos WHERE precio_d1 < ? AND precio_d1 > 0";
+          break;
+        case "OLIMPICA":
+          query =
+            "SELECT * FROM productos WHERE precio_olim < ? AND precio_olim > 0";
+          break;
+        case "todos":
+          query = `
+            SELECT * FROM productos 
+            WHERE (precio_exito > 0 AND precio_exito < ?) OR 
+                  (precio_olim > 0 AND precio_olim < ?) OR 
+                  (precio_d1 > 0 AND precio_d1 < ?);`;
+          values = [precioMaximo, precioMaximo, precioMaximo];
+          break;
+        
+      }
     }
     console.log({ query, values });
 
