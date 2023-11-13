@@ -77,8 +77,9 @@ rutasProductos
   .get(async (req, res) => {
     try {
       const { distribuidor } = req.params;
+      const distribuidorxd = distribuidor
 
-      const prods = await getProductosPorDistribuidor(distribuidor);
+      const prods = await getProductosPorDistribuidor(distribuidorxd);
       if (!prods) {
         return res.status(404).send("No se encontraron productos para el distribuidor especificado");
       }
