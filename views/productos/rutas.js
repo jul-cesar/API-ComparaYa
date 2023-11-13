@@ -10,7 +10,12 @@ import {
   getProductosPaginados,
   getProductosByCategory,
   getProductosPaginadosConCategoria,
-  getProductosFiltrados,
+  getProductosPMQ,
+  getProductosPorDistribuidor,
+  getProductosPorDistribuidorYCategoria,
+  getProductosPorPrecioMaximoYCategoria,
+  getProductosPMQYDistribuidor,
+  getProductosPMQDistribuidorYCategoria,
 } from "../../controllers/productos/controller.js";
 
 const rutasProductos = Express.Router();
@@ -47,25 +52,112 @@ rutasProductos.route("/productos/categoria/:id").get(async (req, res) => {
 });
 
 // Ruta unificada para productos filtrados
-rutasProductos.route("/productos/filtrados/:preciomax/:catid/:distri").get(async (req, res) => {
-  try {
-    const { preciomax,catid, distri } = req.params
-    const id = parseInt(catid, 10);
-    const precioMaximo = preciomax;
-  
+rutasProductos
+  .route("/productos/filtrados/:preciomax/")
+  .get(async (req, res) => {
+    try {
+      const { preciomax } = req.params;
+     
+      const precioMaximo = preciomax;
 
-    const prods = await getProductosFiltrados(precioMaximo, id, distri);
+      const prods = await getProductosPMQ(precioMaximo);
+      if (!prods) {
+        return res
+          .status(404)
+          .send("No se encontraron productos con los filtros aplicados");
+      }
+      res.status(200).send(prods);
+    } catch (error) {
+      console.error("Error al obtener los productos filtrados", error);
+      res.status(500).send("Ocurrió un error al obtener los productos");
+    }
+  });
+
+  rutasProductos.route("/productos/filtrados/distribuidor/:distribuidor")
+  .get(async (req, res) => {
+    try {
+      const { distribuidor } = req.params;
+
+      const prods = await getProductosPorDistribuidor(distribuidor);
+      if (!prods) {
+        return res.status(404).send("No se encontraron productos para el distribuidor especificado");
+      }
+      res.status(200).send(prods);
+    } catch (error) {
+      console.error("Error al obtener los productos por distribuidor", error);
+      res.status(500).send("Ocurrió un error al obtener los productos");
+    }
+  });
+
+  rutasProductos.route("/productos/filtrados/:preciomax/distribuidor/:distribuidor")
+  .get(async (req, res) => {
+    try {
+      const { preciomax, distribuidor } = req.params;
+
+      const prods = await getProductosPMQYDistribuidor(preciomax, distribuidor);
+      if (!prods) {
+        return res.status(404).send("No se encontraron productos con los criterios especificados");
+      }
+      res.status(200).send(prods);
+    } catch (error) {
+      console.error("Error al obtener los productos por precio máximo y distribuidor", error);
+      res.status(500).send("Ocurrió un error al obtener los productos");
+    }
+  });
+
+  rutasProductos.route("/productos/filtrados/:preciomax/distribuidor/:distribuidor/categoria/:categoriaid")
+  .get(async (req, res) => {
+    try {
+      const { preciomax, distribuidor, categoriaid } = req.params;
+
+      const prods = await getProductosPMQDistribuidorYCategoria(preciomax, distribuidor, categoriaid);
+      if (!prods) {
+        return res.status(404).send("No se encontraron productos con los criterios especificados");
+      }
+      res.status(200).send(prods);
+    } catch (error) {
+      console.error("Error al obtener los productos con todos los filtros", error);
+      res.status(500).send("Ocurrió un error al obtener los productos");
+    }
+  });
+
+  // Ruta para filtrar por precio máximo y categoría
+rutasProductos.route("/productos/filtrados/:preciomax/categoria/:categoriaid")
+.get(async (req, res) => {
+  try {
+    const {preciomax, categoriaid } = req.params;
+
+    const prods = await getProductosPorPrecioMaximoYCategoria(preciomax, categoriaid);
     if (!prods) {
-      return res
-        .status(404)
-        .send("No se encontraron productos con los filtros aplicados");
+      return res.status(404).send("No se encontraron productos con los criterios especificados");
     }
     res.status(200).send(prods);
   } catch (error) {
-    console.error("Error al obtener los productos filtrados", error);
+    console.error("Error al obtener los productos con todos los filtros", error);
     res.status(500).send("Ocurrió un error al obtener los productos");
   }
 });
+
+// Ruta para filtrar por distribuidor y categoría
+rutasProductos.route("/productos/filtrados/distribuidor/:distribuidor/categoria/:categoriaid")
+.get(async (req, res) => {
+  try {
+    const {distribuidor, categoriaid } = req.params;
+
+    const prods = await getProductosPorDistribuidorYCategoria(distribuidor, categoriaid);
+    if (!prods) {
+      return res.status(404).send("No se encontraron productos con los criterios especificados");
+    }
+    res.status(200).send(prods);
+  } catch (error) {
+    console.error("Error al obtener los productos con todos los filtros", error);
+    res.status(500).send("Ocurrió un error al obtener los productos");
+  }
+});
+
+
+
+
 
 rutasProductos
   .route("/productos/:categoriaid/:page/:limit")
