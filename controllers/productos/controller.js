@@ -28,6 +28,7 @@ export const getProductosFiltrados = async (
   try {
     let query;
     const values = [precioMaximo, categoriaid];
+    console.log({ precioMaximo, categoriaid, distribuidor });
 
     switch (distribuidor) {
       case "EXITO":

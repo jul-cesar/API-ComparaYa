@@ -50,7 +50,7 @@ rutasProductos.route("/productos/categoria/:id").get(async (req, res) => {
 rutasProductos.route("/productos/filtrados/:preciomax/:catid/:distri").get(async (req, res) => {
   try {
     const { preciomax, idcat, distribuidor } = req.params
-    const id = parseInt(idcat, 10);
+    const id = idcat;
     const precioMaximo = preciomax;
 
     const prods = await getProductosFiltrados(precioMaximo, id, distribuidor);
