@@ -10,7 +10,6 @@ import {
   getProductosPaginados,
   getProductosByCategory,
   getProductosPaginadosConCategoria,
-  getProductosPMQ,
   getProductosPorDistribuidor,
   getProductosPorDistribuidorYCategoria,
   getProductosPorPrecioMaximoYCategoria,
@@ -18,6 +17,7 @@ import {
   getProductosPMQDistribuidorYCategoria,
 } from "../../controllers/productos/controller.js";
 import { getRolUser } from "../../controllers/roles/controller.js";
+import { getByDistribuidor, getByDistribuidorAndCategory, getByEverything, getByMaxPrice, getByMaxPriceAndCategory, getByMinPrice, getByMinPrinceAndDistribuidora } from "../../controllers/productos/filtrosControllers.js";
 
 const rutasProductos = Express.Router();
 //Rutas
@@ -61,7 +61,7 @@ rutasProductos
      
       const precioMaximo = preciomax;
 
-      const prods = await getProductosPMQ(precioMaximo);
+      const prods = await getByMaxPrice(precioMaximo);
       if (!prods) {
         return res
           .status(404)
@@ -80,7 +80,7 @@ rutasProductos
       const { distribuidor } = req.params;
       const distribuidorxd = distribuidor.toLowerCase();
 
-      const prods = await getProductosPorDistribuidor(distribuidorxd);
+      const prods = await getByDistribuidor(distribuidorxd);
       if (!prods) {
         return res.status(404).send("No se encontraron productos para el distribuidor especificado");
       }
@@ -97,7 +97,7 @@ rutasProductos
       const { preciomax, distribuidor } = req.params;
       const distri = distribuidor.toLowerCase()
 
-      const prods = await getProductosPMQYDistribuidor(preciomax, distri);
+      const prods = await getByMinPrinceAndDistribuidora(preciomax, distri);
       if (!prods) {
         return res.status(404).send("No se encontraron productos con los criterios especificados");
       }
@@ -114,7 +114,7 @@ rutasProductos
       const { preciomax, distribuidor, categoriaid } = req.params;
       const distri = distribuidor.toLowerCase()
 
-      const prods = await getProductosPMQDistribuidorYCategoria(preciomax, distri, categoriaid);
+      const prods = await getByEverything(preciomax, distri, categoriaid);
       if (!prods) {
         return res.status(404).send("No se encontraron productos con los criterios especificados");
       }
@@ -131,7 +131,7 @@ rutasProductos.route("/productos/filtrados/:preciomax/categoria/:categoriaid")
   try {
     const {preciomax, categoriaid } = req.params;
 
-    const prods = await getProductosPorPrecioMaximoYCategoria(preciomax, categoriaid);
+    const prods = await getByMaxPriceAndCategory(preciomax, categoriaid);
     if (!prods) {
       return res.status(404).send("No se encontraron productos con los criterios especificados");
     }
@@ -149,7 +149,7 @@ rutasProductos.route("/productos/filtrados/distribuidor/:distribuidor/categoria/
     const {distribuidor, categoriaid } = req.params;
     const distri = distribuidor.toLowerCase()
 
-    const prods = await getProductosPorDistribuidorYCategoria(distri, categoriaid);
+    const prods = await getByDistribuidorAndCategory(distri, categoriaid);
     if (!prods) {
       return res.status(404).send("No se encontraron productos con los criterios especificados");
     }
