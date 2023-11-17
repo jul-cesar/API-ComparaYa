@@ -10,14 +10,17 @@ import {
   getProductosPaginados,
   getProductosByCategory,
   getProductosPaginadosConCategoria,
-  getProductosPorDistribuidor,
-  getProductosPorDistribuidorYCategoria,
-  getProductosPorPrecioMaximoYCategoria,
-  getProductosPMQYDistribuidor,
-  getProductosPMQDistribuidorYCategoria,
 } from "../../controllers/productos/controller.js";
+
 import { getRolUser } from "../../controllers/roles/controller.js";
-import { getByDistribuidor, getByDistribuidorAndCategory, getByEverything, getByMaxPrice, getByMaxPriceAndCategory, getByMinPrice, getByMinPrinceAndDistribuidora } from "../../controllers/productos/filtrosControllers.js";
+import {
+  getByDistribuidor,
+  getByDistribuidorAndCategory,
+  getByEverything,
+  getByMaxPrice,
+  getByMaxPriceAndCategory,
+  getByMinPrinceAndDistribuidora,
+} from "../../controllers/productos/filtrosControllers.js";
 
 const rutasProductos = Express.Router();
 //Rutas
@@ -53,12 +56,10 @@ rutasProductos.route("/productos/categoria/:id").get(async (req, res) => {
 });
 
 // Ruta unificada para productos filtrados
-rutasProductos
-  .route("/productos/filtrados/:preciomax/")
-  .get(async (req, res) => {
+rutasProductos.route("/productos/filtrados/:preciomax/").get(async (req, res) => {
     try {
       const { preciomax } = req.params;
-     
+
       const precioMaximo = preciomax;
 
       const prods = await getByMaxPrice(precioMaximo);
@@ -72,17 +73,20 @@ rutasProductos
       console.error("Error al obtener los productos filtrados", error);
       res.status(500).send("Ocurrió un error al obtener los productos");
     }
-  });
+});
 
-  rutasProductos.route("/productos/filtrados/distribuidor/:distribuidor")
-  .get(async (req, res) => {
+rutasProductos.route("/productos/filtrados/distribuidor/:distribuidor").get(async (req, res) => {
     try {
       const { distribuidor } = req.params;
       const distribuidorxd = distribuidor.toLowerCase();
 
       const prods = await getByDistribuidor(distribuidorxd);
       if (!prods) {
-        return res.status(404).send("No se encontraron productos para el distribuidor especificado");
+        return res
+          .status(404)
+          .send(
+            "No se encontraron productos para el distribuidor especificado"
+          );
       }
       res.status(200).send(prods);
     } catch (error) {
@@ -91,82 +95,97 @@ rutasProductos
     }
   });
 
-  rutasProductos.route("/productos/filtrados/:preciomax/distribuidor/:distribuidor")
-  .get(async (req, res) => {
+rutasProductos.route("/productos/filtrados/:preciomax/distribuidor/:distribuidor").get(async (req, res) => {
     try {
       const { preciomax, distribuidor } = req.params;
-      const distri = distribuidor.toLowerCase()
+      const distri = distribuidor.toLowerCase();
 
       const prods = await getByMinPrinceAndDistribuidora(preciomax, distri);
       if (!prods) {
-        return res.status(404).send("No se encontraron productos con los criterios especificados");
+        return res
+          .status(404)
+          .send("No se encontraron productos con los criterios especificados");
       }
       res.status(200).send(prods);
     } catch (error) {
-      console.error("Error al obtener los productos por precio máximo y distribuidor", error);
+      console.error(
+        "Error al obtener los productos por precio máximo y distribuidor",
+        error
+      );
       res.status(500).send("Ocurrió un error al obtener los productos");
     }
   });
 
-  rutasProductos.route("/productos/filtrados/:preciomax/distribuidor/:distribuidor/categoria/:categoriaid")
-  .get(async (req, res) => {
+rutasProductos.route(
+    "/productos/filtrados/:preciomax/distribuidor/:distribuidor/categoria/:categoriaid"
+  ).get(async (req, res) => {
     try {
       const { preciomax, distribuidor, categoriaid } = req.params;
-      const distri = distribuidor.toLowerCase()
+      const distri = distribuidor.toLowerCase();
 
       const prods = await getByEverything(preciomax, distri, categoriaid);
       if (!prods) {
-        return res.status(404).send("No se encontraron productos con los criterios especificados");
+        return res
+          .status(404)
+          .send("No se encontraron productos con los criterios especificados");
       }
       res.status(200).send(prods);
     } catch (error) {
-      console.error("Error al obtener los productos con todos los filtros", error);
+      console.error(
+        "Error al obtener los productos con todos los filtros",
+        error
+      );
       res.status(500).send("Ocurrió un error al obtener los productos");
     }
   });
 
-  // Ruta para filtrar por precio máximo y categoría
+// Ruta para filtrar por precio máximo y categoría
 rutasProductos.route("/productos/filtrados/:preciomax/categoria/:categoriaid")
-.get(async (req, res) => {
-  try {
-    const {preciomax, categoriaid } = req.params;
+  .get(async (req, res) => {
+    try {
+      const { preciomax, categoriaid } = req.params;
 
-    const prods = await getByMaxPriceAndCategory(preciomax, categoriaid);
-    if (!prods) {
-      return res.status(404).send("No se encontraron productos con los criterios especificados");
+      const prods = await getByMaxPriceAndCategory(preciomax, categoriaid);
+      if (!prods) {
+        return res
+          .status(404)
+          .send("No se encontraron productos con los criterios especificados");
+      }
+      res.status(200).send(prods);
+    } catch (error) {
+      console.error(
+        "Error al obtener los productos con todos los filtros",
+        error
+      );
+      res.status(500).send("Ocurrió un error al obtener los productos");
     }
-    res.status(200).send(prods);
-  } catch (error) {
-    console.error("Error al obtener los productos con todos los filtros", error);
-    res.status(500).send("Ocurrió un error al obtener los productos");
-  }
-});
+  });
 
 // Ruta para filtrar por distribuidor y categoría
-rutasProductos.route("/productos/filtrados/distribuidor/:distribuidor/categoria/:categoriaid")
-.get(async (req, res) => {
-  try {
-    const {distribuidor, categoriaid } = req.params;
-    const distri = distribuidor.toLowerCase()
+rutasProductos.route(
+    "/productos/filtrados/distribuidor/:distribuidor/categoria/:categoriaid"
+  ).get(async (req, res) => {
+    try {
+      const { distribuidor, categoriaid } = req.params;
+      const distri = distribuidor.toLowerCase();
 
-    const prods = await getByDistribuidorAndCategory(distri, categoriaid);
-    if (!prods) {
-      return res.status(404).send("No se encontraron productos con los criterios especificados");
+      const prods = await getByDistribuidorAndCategory(distri, categoriaid);
+      if (!prods) {
+        return res
+          .status(404)
+          .send("No se encontraron productos con los criterios especificados");
+      }
+      res.status(200).send(prods);
+    } catch (error) {
+      console.error(
+        "Error al obtener los productos con todos los filtros",
+        error
+      );
+      res.status(500).send("Ocurrió un error al obtener los productos");
     }
-    res.status(200).send(prods);
-  } catch (error) {
-    console.error("Error al obtener los productos con todos los filtros", error);
-    res.status(500).send("Ocurrió un error al obtener los productos");
-  }
-});
+  });
 
-
-
-
-
-rutasProductos
-  .route("/productos/:categoriaid/:page/:limit")
-  .get(async (req, res) => {
+rutasProductos.route("/productos/:categoriaid/:page/:limit").get(async (req, res) => {
     try {
       const categoria_id = req.params.categoriaid;
       const page = parseInt(req.params.page, 10);
@@ -224,8 +243,6 @@ rutasProductos.route("/productos/:id").get(async (req, res) => {
     console.error("Error al encontrar un producto con id dado");
   }
 });
-
-
 
 rutasProductos.route("/productos/:id").delete(async (req, res) => {
   try {
@@ -300,7 +317,6 @@ rutasProductos.route("/productos/:id").put(async (req, res) => {
     console.error(error);
   }
 });
-
 
 rutasProductos.route("/roles/:id").get(async (req, res) => {
   try {
