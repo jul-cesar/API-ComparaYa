@@ -3,10 +3,10 @@ import mysql from "mysql2";
 export const PoolDB = () => {
   const pool = mysql
     .createPool({
-      host: "sql10.freesqldatabase.com",
-      user: "sql10662344",
-      password: "dJx83BFDcI",
-      database: "sql10662344",
+      host: "bvrrllxlnbfxvzkuxi48-mysql.services.clever-cloud.com",
+      user: "uergrq19spxmymwc",
+      password: "nQFNl1zx3GGSVBQKmRUj",
+      database: "bvrrllxlnbfxvzkuxi48",
     })
     .promise();
   return pool;

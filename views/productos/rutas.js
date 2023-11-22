@@ -8,8 +8,6 @@ import {
   addProducto,
   updateProduct,
   getProductosPaginados,
-  getProductosByCategory,
-  getProductosPaginadosConCategoria,
 } from "../../controllers/productos/controller.js";
 
 import { getRolUser } from "../../controllers/roles/controller.js";
@@ -20,6 +18,8 @@ import {
   getByMaxPrice,
   getByMaxPriceAndCategory,
   getByMinPrinceAndDistribuidora,
+  getPaginatedCategories,
+  getProductosByCategory,
 } from "../../controllers/productos/filtrosControllers.js";
 
 const rutasProductos = Express.Router();
@@ -190,7 +190,7 @@ rutasProductos.route("/productos/:categoriaid/:page/:limit").get(async (req, res
       const categoria_id = req.params.categoriaid;
       const page = parseInt(req.params.page, 10);
       const limit = parseInt(req.params.limit, 10);
-      const prods = await getProductosPaginadosConCategoria(
+      const prods = await getPaginatedCategories(
         categoria_id,
         page,
         limit
