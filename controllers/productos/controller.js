@@ -20,7 +20,6 @@ export const getProductosPaginados = async (page, limit) => {
   }
 };
 
-
 export const getProductos = async () => {
   try {
     const result = await pool.query("SELECT * from productos");
