@@ -52,7 +52,7 @@ export const ScrapMaker = async (
           precio_exito,
           categoria_id
         );
-        console.log(`producto nuevo agregado con id: ${result[0].insertId}`);
+        console.log(`producto nuevo agregado con id: ${result} `);
       } catch (error) {
         console.error("Error adding product to database:", error);
       }
@@ -81,7 +81,7 @@ export const ScrapMaker = async (
     const newProducts = [];
 
     for (const prod of data) {
-      const existingProd = prodsOnDb.find(
+      const existingProd = prodsOnDb?.find(
         (p) =>
           p.nombre.toLowerCase() === prod.nombre.toLowerCase() &&
           p.categoria_id === prod.categoria_id
@@ -204,8 +204,6 @@ export const ScrapMaker = async (
       console.log("Waiting for img selector...");
       await page.waitForSelector(imgSelector, { timeout: 60000 });
       console.log("Img selector found.");
-
-     
 
       if (distribuidora === "exito" || distribuidora === "d1") {
         await autoScroll(page);

@@ -6,16 +6,17 @@ export const getScrapingConfig = async () => {
   try {
     const result = await pool.query("SELECT * FROM scraping_config");
 
-    if (!Array.isArray(result) || result.length < 1) {
-      throw new Error("No se encontraron usuarios");
+    if (!Array.isArray(result.rows) || result.rows.length < 1) {
+      throw new Error("No se encontraron configuraciones de scraping");
     }
-    return result[0];
+    return result.rows;
   } catch (error) {
-    console.error("Error al traer todos los usuarios", error);
+    console.error("Error al obtener todas las configuraciones de scraping", error);
+    throw error;
   }
 };
 
-export const upadteScrapingConfig = async (
+export const updateScrapingConfig = async (
   newWebsite_name,
   newBase_url,
   newCard_selector,
@@ -27,23 +28,25 @@ export const upadteScrapingConfig = async (
 ) => {
   try {
     const result = await pool.query(
-      "update scraping_config set website_name = ?, base_url = ?, card_selector = ?, nombre_selector = ?, precio_selector = ?, img_selector = ?, page_param_name = ? where id = ?"[
-        (newWebsite_name,
+      "UPDATE scraping_config SET website_name = $1, base_url = $2, card_selector = $3, nombre_selector = $4, precio_selector = $5, img_selector = $6, page_param_name = $7 WHERE id = $8",
+      [
+        newWebsite_name,
         newBase_url,
         newCard_selector,
         newNombre_selector,
         newPrecio_selector,
         newImg_selector,
         newPage_param_name,
-        id)
+        id,
       ]
     );
 
-    if (!Array.isArray(result) || result.length < 1) {
-      throw new Error("No se encontraron usuarios");
+    if (!Array.isArray(result.rows) || result.rows.length < 1) {
+      throw new Error("No se encontraron configuraciones de scraping");
     }
-    return result[0];
+    return result.rows;
   } catch (error) {
-    console.error("Error al traer todos los usuarios", error);
+    console.error("Error al actualizar la configuración de scraping", error);
+    throw error;
   }
 };

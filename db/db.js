@@ -1,13 +1,14 @@
-import mysql from "mysql2";
+import pkg from "pg";
+import "dotenv/config";
+
+const { Pool } = pkg;
+
+// Rest of your code using Pool
 
 export const PoolDB = () => {
-  const pool = mysql
-    .createPool({
-      host: "127.0.0.1",
-      user: "root",
-      password: "",
-      database: "comparaya",
-    })
-    .promise();
+  const pool = new Pool({
+    connectionString: process.env.POSTGRES_URL + "?sslmode=require",
+  });
+
   return pool;
 };

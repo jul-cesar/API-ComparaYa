@@ -5,15 +5,15 @@ export const getProductosPaginados = async (page, limit) => {
   try {
     const offset = (page - 1) * limit;
 
-    const query = "SELECT * FROM productos LIMIT ?, ?";
+    const query = "SELECT * FROM productos OFFSET $1 LIMIT $2";
     const values = [offset, limit];
     const result = await pool.query(query, values);
 
-    if (!Array.isArray(result) || result.length < 1) {
+    if (!Array.isArray(result.rows) || result.rows.length < 1) {
       throw new Error("No se encontraron productos");
     }
 
-    return result[0];
+    return result.rows;
   } catch (error) {
     console.error("Error al traer todos los productos", error);
     throw error;
@@ -24,10 +24,10 @@ export const getProductos = async () => {
   try {
     const result = await pool.query("SELECT * from productos");
 
-    if (!Array.isArray(result) || result.length < 1) {
+    if (!Array.isArray(result.rows) || result.rows.length < 1) {
       throw new Error("No se encontraron productos");
     }
-    return result[0];
+    return result.rows;
   } catch (error) {
     console.error("Error al traer todos los productos", error);
   }
@@ -35,8 +35,10 @@ export const getProductos = async () => {
 
 export const getOneProducto = async (id) => {
   try {
-    const result = await pool.query(`select * from productos where id = ?`, id);
-    return result[0][0];
+    const result = await pool.query("SELECT * FROM productos WHERE id = $1", [
+      id,
+    ]);
+    return result.rows[0];
   } catch (error) {
     console.error("Error al traer un producto", error);
   }
@@ -44,7 +46,9 @@ export const getOneProducto = async (id) => {
 
 export const deleteProducto = async (id) => {
   try {
-    const result = await pool.query("delete from productos where id = ?", id);
+    const result = await pool.query("DELETE FROM productos WHERE id = $1", [
+      id,
+    ]);
     return result;
   } catch (error) {
     console.error("Error al eliminar un producto", error);
@@ -61,7 +65,7 @@ export const addProducto = async (
 ) => {
   try {
     const result = await pool.query(
-      "insert into productos(nombre, imagen_url, precio_d1, precio_olim, precio_exito, categoria_id) values(?, ?, ?, ?, ?, ?)",
+      "INSERT INTO productos(nombre, imagen_url, precio_d1, precio_olim, precio_exito, categoria_id) VALUES ($1, $2, $3, $4, $5, $6)",
       [nombre, imagen_url, precio_d1, precio_olim, precio_exito, categoria_id]
     );
     return result;
@@ -81,7 +85,7 @@ export const updateProduct = async (
 ) => {
   try {
     const result = await pool.query(
-      "update productos set nombre = ?, imagen_url = ?, precio_d1 = ?, precio_olim= ?, precio_exito = ?, categoria_id = ? where id = ?",
+      "UPDATE productos SET nombre = $1, imagen_url = $2, precio_d1 = $3, precio_olim = $4, precio_exito = $5, categoria_id = $6 WHERE id = $7",
       [
         newNombre,
         newImagen_url,
@@ -100,7 +104,7 @@ export const updateProduct = async (
 
 export const SumPrice = async () => {
   const precioTotal = await pool.query(
-    "select sum(precio * cantidad) as 'preciototal' from productos  "
+    "SELECT SUM(precio * cantidad) AS preciototal FROM productos"
   );
-  return precioTotal[0][0];
+  return precioTotal.rows[0];
 };

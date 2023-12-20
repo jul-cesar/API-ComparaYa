@@ -9,9 +9,6 @@
   "type": "module",
   "scripts": {
     "start": "nodemon index.js"
-    
-    
-    
   },
   "keywords": [],
   "author": "",
@@ -23,6 +20,7 @@
     "mysql2": "^3.6.1",
     "netlify-cli": "^17.1.0",
     "netlify-lambda": "^2.0.16",
+    "pg": "^8.11.3",
     "puppeteer": "^21.3.8",
     "serverless-http": "^3.2.0",
     "uuid": "^9.0.1"
