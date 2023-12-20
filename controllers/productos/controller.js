@@ -108,3 +108,5 @@ export const SumPrice = async () => {
   );
   return precioTotal.rows[0];
 };
+
+console.log(await getProductos());
