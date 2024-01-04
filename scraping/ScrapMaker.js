@@ -52,7 +52,7 @@ export const ScrapMaker = async (
           precio_exito,
           categoria_id
         );
-        console.log(`producto nuevo agregado con id: ${result} `);
+        console.log(`producto nuevo agregado `);
       } catch (error) {
         console.error("Error adding product to database:", error);
       }
