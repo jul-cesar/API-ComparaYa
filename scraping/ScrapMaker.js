@@ -64,14 +64,14 @@ export const ScrapMaker = async (
       const result = await getOneCategoriaByName(categoria);
       return result.id;
     } catch (e) {
-      console.error("error al agregar categoria");
+      console.error("error al traer categoria");
     }
   };
 
   const addCategoryToDb = async (categoria) => {
     try {
       const result = await addCategoria(categoria);
-      return result[0].insertId;
+      return result;
     } catch (e) {
       console.error("error al agregar categoria");
     }
@@ -131,6 +131,7 @@ export const ScrapMaker = async (
           "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
         userDataDir:
           "C:\\Users\\julio\\AppData\\Local\\Google\\Chrome\\User Data",
+        headless: false,
       });
 
       const page = await browser.newPage();
@@ -142,31 +143,18 @@ export const ScrapMaker = async (
       //   return categoriaElement ? categoriaElement.innerText : null;
       // }, categoriaSelector);
 
-      function getCategory(distribuidora, url) {
+      function getCategory(url) {
         const pageUrl = new URL(url);
-        let index;
+        let index = 2;
 
-        switch (distribuidora) {
-          case "d1":
-            index = 2;
-            break;
-          case "olimpica":
-            index = 2;
-            break;
-          default:
-            index = 2;
-            break;
-        }
         let catIrre = pageUrl.pathname.split("/")[index];
         if (catIrre.includes("-")) {
-          catIrre = catIrre = catIrre.replace(/-/g, " ");
-          return catIrre;
-        } else {
-          return catIrre;
+          catIrre = catIrre.replace(/-/g, " ");
         }
+        return catIrre;
       }
 
-      const categoria = getCategory(distribuidora, url);
+      const categoria = getCategory(url);
 
       if (categoria) {
         console.log(`Categoría de la página: ${categoria}`);
@@ -284,7 +272,7 @@ export const ScrapMaker = async (
     await page.evaluate(async () => {
       await new Promise((resolve) => {
         let totalHeight = 0;
-        const scrollInterval = 800;
+        const scrollInterval = 700;
         const scrollStep = 700;
 
         const scrollIntervalId = setInterval(() => {
